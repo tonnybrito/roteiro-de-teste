@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roteiro de Teste HTML</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --surface: #ffffff; --text: #1f2328; --muted: #5b6168;
+    --border: #e3e3df; --accent: #0f7a3d; --accent-bg: #e8f5ee;
+    --warn: #9a6a00; --warn-bg: #fef6e7; --code-bg: #f0f0ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16181b; --surface: #1f2226; --text: #e8e9ea; --muted: #a3a8ae;
+      --border: #33373c; --accent: #4cc47f; --accent-bg: #173322;
+      --warn: #f2c14e; --warn-bg: #362708; --code-bg: #2a2e33;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 22px; margin-bottom: 18px;
+  }
+  h2 { font-size: 19px; margin: 0 0 10px; }
+  .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%; margin-right: 8px;
+    background: var(--accent-bg); color: var(--accent); font-size: 14px; font-weight: 700;
+  }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  li { margin: 6px 0; }
+  code {
+    background: var(--code-bg); padding: 2px 6px; border-radius: 5px;
+    font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all;
+  }
+  kbd {
+    border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px;
+    padding: 0 6px; font: 13px -apple-system, sans-serif; background: var(--surface);
+  }
+  .box { border-radius: 10px; padding: 12px 14px; margin: 12px 0 0; }
+  .tip  { background: var(--accent-bg); }
+  .warn { background: var(--warn-bg); color: var(--text); }
+  .warn strong { color: var(--warn); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 8px 6px; border-top: 1px solid var(--border); vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🧪 Roteiro de Teste HTML</h1>
+  <p class="sub">A sua skill <code>/roteiro-de-teste</code>: monta uma lista de testes manuais em HTML, com botão Salvar, para qualquer projeto.</p>
+
+  <section>
+    <h2><span class="num">1</span>O que ela faz</h2>
+    <p>Você pede ao Claude e ele:</p>
+    <ol>
+      <li><strong>Lê o projeto</strong> que está aberto: as regras, a especificação, as issues do Linear e o histórico do git. Descobre em quais <strong>plataformas</strong> ele roda (iOS, Android, Web) e se tem <strong>variações</strong> (por exemplo, um jogo com uma trilha da Floresta e outra do Oceano).</li>
+      <li><strong>Decide o que precisa ser testado à mão</strong> e te mostra a lista antes de montar. Um card que vale para todas as variações aparece <strong>uma vez só</strong>.</li>
+      <li>Se o app puder rodar aqui (emulador, simulador ou navegador), oferece mandar o <strong>QA independente</strong> testar, uma plataforma por vez. O que o QA viu entra no card, com prints.</li>
+      <li>Depois, o <strong>Auditor</strong> confere só os cards que o QA <strong>aprovou</strong>: vê se o trabalho seguiu as regras do projeto (issue, branch, commits). Se o QA ou o Auditor reprovar, quem programa corrige, o QA testa de novo e o Auditor revisa de novo. <strong>Um card só fica verde quando os dois aprovam.</strong></li>
+      <li>Cada card tem <strong>três colunas</strong>: <strong>QA</strong> (Passou / Falhou), <strong>Auditor</strong> (Passou / Falhou, que só libera depois que o QA aprova) e <strong>Não testado</strong>. QA aprovou e falta o Auditor: o card fica <strong>azul</strong>. O Auditor reprovou: fica <strong>vermelho</strong> e mostra "QA aprovou · Auditor reprovou", com o motivo na nota.</li>
+      <li>Quando todos os cards estão verdes, ela avisa, mas <strong>quem decide se o projeto acabou é o dev</strong>.</li>
+      <li><strong>Cria um HTML só por produto</strong>, com um card por teste: "Como testar", "Passa se", os botões Passou / Falhou / Não testado e uma nota. No topo você escolhe a <strong>plataforma</strong>, a <strong>rodada</strong> e o que está jogando, e troca entre <strong>português/inglês</strong> e <strong>claro/escuro</strong>.</li>
+    </ol>
+    <p><strong>Rodadas.</strong> Rodou a skill de novo depois de terminar mais uma parte do projeto? Ela não cria outro arquivo: acrescenta uma <strong>rodada nova</strong> no mesmo HTML, com os cards novos e os que falharam antes. As marcações que você salvou <strong>nunca são apagadas</strong> (e antes de mexer ela guarda uma cópia em <code>~/Ferramentas/html-salvavel/backups/</code>).</p>
+    <p><strong>Card aprovado não é retestado</strong>, a não ser que o dev mexa nele, ou num card <strong>ligado</strong> a ele (mexer em A pode quebrar B). Esses voltam com o aviso "↻ Alterado" ou "↻ Ligado a…".</p>
+    <p>Cada plataforma tem as <strong>suas</strong> marcações: passar no Android não marca o iOS. A aba Resultado mostra as plataformas lado a lado.</p>
+    <div class="box tip">💡 Card que <strong>passou com nota</strong> fica <strong>âmbar</strong> ("⚠️ Passou c/ nota"), para não passar despercebido.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>Usar num projeto deste Mac</h2>
+    <p>Não precisa instalar nada: ela já vale para <strong>todos</strong> os projetos deste Mac.</p>
+    <ol>
+      <li>Abra o Claude Code na pasta do projeto.</li>
+      <li>Digite <code>/roteiro-de-teste</code>, ou escreva algo como "monta o roteiro de teste".</li>
+      <li>Responda às perguntas do Claude (uma de cada vez) e aprove a lista de cards.</li>
+      <li>Quando o HTML estiver pronto, dê <strong>dois cliques</strong> em <code>abrir-html-salvavel.command</code>, que fica na mesma pasta do HTML.</li>
+    </ol>
+    <div class="box warn"><strong>Primeira vez num Mac:</strong> o macOS pode bloquear o atalho. Clique com o botão direito nele › <strong>Abrir</strong> › <strong>Abrir</strong>. Só é preciso uma vez.</div>
+    <div class="box warn"><strong>"Só leitura" no topo da página?</strong> O HTML foi aberto com dois cliques no próprio arquivo, ou a janela do Terminal foi fechada. Abra sempre pelo atalho e deixe o Terminal aberto enquanto testa.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>Instalar em outro Mac</h2>
+    <ol>
+      <li>Recebeu o <code>roteiro-de-teste.zip</code>? Dê dois cliques nele: aparece uma pasta chamada <code>roteiro-de-teste</code>.</li>
+      <li>Abra o Finder, aperte <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>G</kbd>, cole <code>~/.claude/skills/</code> e aperte Enter.<br>
+          Se aparecer que a pasta não existe, crie-a: no Terminal, <code>mkdir -p ~/.claude/skills</code>.</li>
+      <li><strong>Arraste a pasta <code>roteiro-de-teste</code></strong> para dentro de <code>skills</code>. O nome precisa ser exatamente esse, porque é o nome do comando.</li>
+      <li>No Terminal, confira se o Python existe: <code>python3 --version</code>. Se o macOS oferecer instalar, aceite.</li>
+      <li>Abra o Claude Code em qualquer projeto e digite <code>/roteiro-de-teste</code>. Na primeira vez, o Claude oferece instalar o resto, perguntando antes de cada coisa:
+        <ul>
+          <li>a ferramenta de salvar, em <code>~/Ferramentas/html-salvavel/</code>;</li>
+          <li>os agentes <strong>QA</strong> e <strong>Auditor</strong>, se você ainda não tiver (depois, reabra o Claude Code);</li>
+          <li>o app <strong>Abrir HTML Salvável</strong>, com ícone próprio, em <code>~/Applications</code>. Arraste ele para o Dock.</li>
+        </ul></li>
+    </ol>
+    <div class="box tip">💡 <strong>O app do Dock:</strong> clique nele, escolha a pasta do projeto que tem o HTML de teste e pronto: abre o Terminal (deixe aberto) e o navegador com a lista. Da próxima vez ele mostra a <strong>lista dos últimos projetos</strong>. Dá para ter dois projetos abertos ao mesmo tempo: cada um fica na sua janela do Terminal. Se o macOS pedir para o app controlar o Terminal, clique em OK.</div>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span>Deixar só num projeto (opcional)</h2>
+    <p>Se quiser que a skill funcione <strong>apenas</strong> num projeto, cole a pasta <code>roteiro-de-teste</code> dentro de <code>&lt;projeto&gt;/.claude/skills/</code>, em vez de na pasta pessoal.</p>
+    <div class="box warn"><strong>Cuidado em projetos de empresa:</strong> o que fica dentro do projeto pode acabar indo para o repositório da empresa. Se a skill é sua, prefira a instalação pessoal (passo 3).</div>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span>O que tem nesta pasta</h2>
+    <table>
+      <tr><td><code>SKILL.md</code></td><td>As instruções que o Claude segue. Não precisa abrir.</td></tr>
+      <tr><td><code>COMO-USAR.html</code></td><td>Este tutorial.</td></tr>
+      <tr><td><code>ferramentas/</code></td><td>O ajudante que o Claude usa para criar o HTML e acrescentar rodadas sem tocar no que você salvou.</td></tr>
+      <tr><td><code>pacote/app/</code></td><td>O app <strong>Abrir HTML Salvável</strong> para o Dock: o roteiro dele, o ícone e o <code>instalar-app.sh</code>, que monta o app.</td></tr>
+      <tr><td><code>pacote/agentes/</code></td><td>Cópias do QA e do Auditor. Se o computador não tiver esses agentes, o Claude pergunta e instala em <code>~/.claude/agents/</code>. Depois é preciso reabrir o Claude Code. Eles leem o projeto, os testes e o git; para lerem também um sistema de tarefas (Linear, Jira…), acrescente as ferramentas dele na linha <code>tools:</code> de cada agente.</td></tr>
+      <tr><td><code>pacote/</code></td><td>As peças que fazem o HTML salvar: o modelo dos cards, o mini-servidor e o atalho. É a cópia-mestre; o Claude instala a partir dela.</td></tr>
+    </table>
+    <div class="box tip">💡 No Mac do Tonny, <code>skill-roteiroTesteHtml</code> é um <strong>atalho</strong> para a pasta verdadeira (<code>~/.claude/skills/roteiro-de-teste</code>). Por isso está sempre atualizado.</div>
+  </section>
+</main>
+</body>
+</html>

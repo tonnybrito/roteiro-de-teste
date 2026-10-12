@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roteiro de teste</title>
+  <script>
+    // Define o tema ANTES do CSS pintar a página, pra não dar aquele flash de claro→escuro.
+    (function () {
+      try {
+        var saved = localStorage.getItem('ssq_theme');
+        var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-light:  #7C8FF5;
+      --brand-mid:    #5E6AD2;
+      --brand-dark:   #454FB0;
+      --brand-darker: #2E3688;
+      --brand-text:   #2A2E3F;
+
+      --gray-50:  #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+
+      --wait:   #F59E0B;   /* aguarda Fábio  */
+      --qa:     #3B82F6;   /* depende do QA  */
+      --third:  #8B5CF6;   /* terceiros      */
+      --done:   #22C55E;   /* fechado        */
+      --toclose:#14B8A6;   /* por fechar     */
+
+      --shadow:    0 4px 6px -1px rgba(0,0,0,.10), 0 2px 4px -1px rgba(0,0,0,.06);
+      --shadow-lg: 0 20px 25px -5px rgba(0,0,0,.12), 0 10px 10px -5px rgba(0,0,0,.04);
+      --radius: 14px;
+
+      --surface: #fff;
+      --ink: #111827;
+      --st-red-bg: #fdecec;      --st-red-border: #f3b4b4;    --st-red-text: #b42318;    --st-red-text-strong: #8a1c14;
+      --st-green-bg: #e9f9ef;    --st-green-border: #b7ebc9;  --st-green-border-2: #9ad9b3; --st-green-text: #0f7a3d;
+      --st-amber-bg: #fef6e7;    --st-amber-border: #f0c674;  --st-amber-border-2: #f7dfae; --st-amber-text: #9a6a00; --st-amber-text-strong: #8a5a00;
+      --st-blue-bg: #eaf1ff;     --st-blue-border: #c3d6ff;   --st-blue-text: #1d4ed8;
+      --st-neutral-bg: #f2f3f5; --st-neutral-border: #dfe1e6; --st-neutral-text: #5b5f6b;
+      --st-tint-bg: #f4f5ff;    --st-tint-border: #d6dbff;
+      --st-red-solid: #b42318; --st-green-solid: #0f7a3d; --st-amber-solid: #9a6a00; /* preenchimento sólido (pílulas/botões) — fixo nos dois temas, sempre com texto branco */
+    }
+    html[data-theme="dark"] {
+      --brand-text: #dfe1f0;
+      --surface: #161a22;
+
+      --gray-50:  #0d1015;
+      --gray-100: #161a21;
+      --gray-200: #262c37;
+      --gray-300: #38404e;
+      --gray-400: #7d8798;
+      --gray-500: #9aa3b2;
+      --gray-600: #b3bac7;
+      --gray-700: #cbd0da;
+      --gray-800: #e2e5ea;
+      --gray-900: #f5f6f8;
+
+      --st-red-bg: #3a1618;      --st-red-border: #6b2329;    --st-red-text: #ff8a80;    --st-red-text-strong: #ffb4a8;
+      --st-green-bg: #10301f;    --st-green-border: #1f5c3a;  --st-green-border-2: #2c7a4d; --st-green-text: #6fe3a0;
+      --st-amber-bg: #362708;    --st-amber-border: #6b4e12;  --st-amber-border-2: #7c5a16; --st-amber-text: #f2c14e; --st-amber-text-strong: #f0b93c;
+      --st-blue-bg: #142a4a;     --st-blue-border: #234a7c;   --st-blue-text: #7fb0ff;
+      --st-neutral-bg: #1c2028; --st-neutral-border: #333947; --st-neutral-text: #a7aec0;
+      --st-tint-bg: #1c2040;    --st-tint-border: #2f3570;
+
+      --brand-dark: #8FA0FF; /* azul mais claro no escuro — o original fica apagado em texto/borda sobre fundo escuro */
+    }
+    html[data-theme="dark"] .todo-item.pending .todo-mark { background: var(--gray-200); border-color: var(--gray-500); }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gray-50);
+      color: var(--brand-text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, var(--brand-darker) 0%, var(--brand-dark) 55%, #6673e0 100%);
+      padding: 40px 40px 46px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,143,245,.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .header-logo {
+      width: 112px; height: 112px;
+      border-radius: 20px;
+      background: #fff;
+      border: 2px solid rgba(255,255,255,.35);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,.18);
+    }
+    /* Substitua este SVG por <img src="logo-do-projeto.png" style="width:88px"> quando tiver o arquivo. */
+    .header-logo svg { width: 84px; height: 84px; }
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(124,143,245,.20);
+      border: 1px solid rgba(124,143,245,.38);
+      color: #cdd5ff;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .header-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--brand-light); animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .header-title { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.12; letter-spacing: -.5px; }
+    .header-subtitle { font-size: 14.5px; color: rgba(255,255,255,.62); margin-top: 7px; }
+    .header-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .header-right .hr-label { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+    .header-right .hr-value { font-size: 15px; font-weight: 700; color: #fff; margin-top: 2px; }
+    .header-right .hr-logout {
+      display: inline-block; margin-top: 10px; font-size: 11.5px; font-weight: 700;
+      color: rgba(255,255,255,.7); text-decoration: none; border: 1px solid rgba(255,255,255,.3);
+      border-radius: 999px; padding: 4px 12px; transition: color .14s, border-color .14s, background .14s;
+    }
+    .header-right .hr-logout:hover { color: #fff; border-color: rgba(255,255,255,.6); background: rgba(255,255,255,.08); }
+    .theme-toggle {
+      appearance: none; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3);
+      color: #fff; font-size: 12px; font-weight: 700;
+      padding: 6px 12px; border-radius: 999px; margin-bottom: 10px;
+      transition: background .14s, border-color .14s;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.5); }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    .nav-wrapper { background: var(--surface); border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 20; box-shadow: var(--shadow); }
+    .nav { max-width: 1160px; margin: 0 auto; display: flex; gap: 4px; padding: 0 24px; overflow-x: auto; }
+    .nav-tab {
+      appearance: none; background: none; border: none; cursor: pointer;
+      font-family: inherit; font-size: 13px; font-weight: 600; color: var(--gray-500);
+      padding: 15px 16px; border-bottom: 3px solid transparent; white-space: nowrap;
+      transition: color .15s, border-color .15s, background .15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .nav-tab:hover { color: var(--brand-dark); background: var(--st-tint-bg); }
+    .nav-tab.active { color: var(--brand-dark); border-bottom-color: var(--brand-dark); font-weight: 800; }
+    .nav-count {
+      background: var(--gray-200); color: var(--gray-600);
+      font-size: 11px; font-weight: 800; border-radius: 999px; padding: 1px 8px; min-width: 20px; text-align: center;
+    }
+    .nav-tab.active .nav-count { background: var(--brand-mid); color: #fff; }
+    .nav-select {
+      display: none;
+      width: 100%;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      color: var(--brand-dark);
+      padding: 14px 40px 14px 20px;
+      border: none;
+      background-color: var(--surface);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23454FB0' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      appearance: none; -webkit-appearance: none;
+    }
+    .nav-select:focus { outline: 2px solid var(--brand-mid); outline-offset: -2px; }
+
+    /* ─── CONTENT ────────────────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 40px 24px 80px; }
+    .tab-content { display: none; animation: fadeUp .28s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-mid); margin-bottom: 8px; }
+    .section-title { font-size: 24px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; }
+    .section-sub { font-size: 14.5px; color: var(--gray-500); margin-bottom: 30px; line-height: 1.55; max-width: 760px; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+    /* ─── LEITURAS (sub-abas) ────────────────────────────── */
+    .subnav {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 26px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200);
+    }
+    .subtab {
+      appearance: none; font-family: inherit; cursor: pointer;
+      font-size: 13px; font-weight: 700; border-radius: 999px; padding: 8px 16px;
+      border: 1px solid var(--gray-300); background: var(--surface); color: var(--gray-600);
+      transition: color .14s, border-color .14s, background .14s;
+    }
+    .subtab:hover { border-color: var(--brand-mid); color: var(--brand-dark); }
+    .subtab.active { background: var(--brand-mid); border-color: var(--brand-mid); color: #fff; }
+    .reading-panel { display: none; }
+    .reading-panel.active { display: block; animation: fadeUp .28s ease; }
+    .reading-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+      flex-wrap: wrap; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 2px solid var(--gray-100);
+    }
+    .reading-head-id { font-size: 12px; font-weight: 800; color: var(--gray-500); letter-spacing: .04em; }
+    .reading-head-title { font-size: 20px; font-weight: 800; color: var(--gray-900); margin-top: 3px; }
+    .reading-head .btn { flex-shrink: 0; min-height: 34px; }
+    .reading-body { max-width: 820px; }
+    .reading-body h3 {
+      font-size: 19px; font-weight: 800; color: var(--gray-900);
+      margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-100);
+    }
+    .reading-body h3:first-child { margin-top: 0; }
+    .reading-body h4 { font-size: 14px; font-weight: 800; color: var(--brand-dark); margin: 20px 0 6px; }
+    .reading-body p { font-size: 14.5px; line-height: 1.72; color: var(--gray-700); margin-bottom: 12px; }
+    .reading-body ul, .reading-body ol { margin: 0 0 14px 22px; }
+    .reading-body li { font-size: 14.5px; line-height: 1.7; color: var(--gray-700); margin-bottom: 6px; }
+    .reading-body strong { color: var(--gray-900); }
+    .reading-body em { color: var(--gray-600); }
+    .reading-body code {
+      background: var(--gray-100); padding: 1px 5px; border-radius: 4px;
+      font-size: 13px; color: var(--gray-700);
+    }
+    .reading-callout {
+      background: var(--st-tint-bg); border: 1px solid var(--st-tint-border); border-left: 4px solid var(--brand-mid);
+      border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+    }
+    .reading-callout p { margin-bottom: 0; }
+    .reading-meta {
+      font-size: 12.5px; color: var(--gray-500); background: var(--gray-50);
+      border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 14px; margin-bottom: 22px;
+    }
+
+    /* ─── PLANILHA DO WALK ───────────────────────────────── */
+    #walk-progress {
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: 12px;
+      padding: 14px 18px; margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .walk-progress-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .walk-progress-label { font-size: 13.5px; font-weight: 800; color: var(--gray-800); }
+    .walk-progress-counts { font-size: 12px; color: var(--gray-500); display: flex; gap: 12px; flex-wrap: wrap; }
+    .walk-progress-bar-track { height: 8px; border-radius: 999px; background: var(--gray-100); overflow: hidden; }
+    .walk-progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--brand-light), var(--brand-mid)); border-radius: 999px; transition: width .2s; }
+    .walk-section-h {
+      font-size: 13px; font-weight: 800; color: var(--brand-dark); text-transform: uppercase; letter-spacing: .04em;
+      margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-100);
+    }
+    .walk-section-h:first-child { margin-top: 0; }
+    .walk-device-h { font-size: 11.5px; font-weight: 800; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; margin: 4px 0 8px; }
+    .walk-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 9px 10px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--surface);
+      margin-bottom: 6px; transition: border-color .15s, background .15s;
+    }
+    .walk-row.is-pass { border-color: var(--st-green-border); background: var(--st-green-bg); }
+    .walk-row.is-finding { border-color: var(--st-red-border); background: var(--st-red-bg); }
+    .walk-row.is-not-tested { border-color: var(--st-neutral-border); background: var(--st-neutral-bg); }
+    .walk-row-main { display: flex; align-items: baseline; gap: 8px; flex: 1 1 260px; min-width: 0; }
+    .walk-row-id { font-size: 11px; font-weight: 800; color: var(--gray-500); flex-shrink: 0; width: 34px; }
+    .walk-row-scenario { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; flex-shrink: 0; }
+    .walk-row-label { font-size: 13px; color: var(--gray-800); line-height: 1.4; }
+    .walk-row-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+    .walk-row-controls select, .walk-row-controls input {
+      font-family: inherit; font-size: 12px; border: 1px solid var(--gray-300); border-radius: 6px;
+      padding: 5px 8px; background: var(--surface); color: var(--gray-800);
+    }
+    .walk-row-controls select { font-weight: 700; min-width: 128px; }
+    .walk-row-controls input.walk-extra { width: 100px; }
+    .walk-row-controls input.walk-note { width: 150px; }
+    @media (max-width: 720px) {
+      .walk-row { flex-direction: column; align-items: stretch; }
+      .walk-row-controls input.walk-extra, .walk-row-controls input.walk-note { width: 100%; }
+    }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
+      border-left: 5px solid var(--accent, var(--gray-300));
+      padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px;
+      box-shadow: var(--shadow); transition: transform .14s, box-shadow .14s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .card-id {
+      font-size: 11.5px; font-weight: 800; letter-spacing: .03em;
+      background: var(--gray-100); color: var(--gray-700); padding: 3px 9px; border-radius: 6px;
+    }
+    .tag {
+      font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; color: #fff;
+    }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--gray-900); line-height: 1.35; }
+    .card-line { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+    .card-line strong { color: var(--gray-800); }
+
+    .todo-title {
+      font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--gray-400); margin-top: 2px;
+    }
+    .todo-list { display: flex; flex-direction: column; gap: 6px; }
+    .todo-item { display: flex; align-items: flex-start; gap: 7px; }
+    .todo-item .todo-mark {
+      flex-shrink: 0; width: 15px; height: 15px; border-radius: 5px; margin-top: 1px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 900; line-height: 1;
+    }
+    .todo-item.done .todo-mark { background: var(--st-green-bg); color: var(--st-green-text); border: 1px solid var(--st-green-border); }
+    .todo-item.pending .todo-mark { background: var(--surface); color: transparent; border: 1px solid var(--gray-300); }
+    .todo-item .todo-text { font-size: 12.5px; line-height: 1.45; }
+    .todo-item.done .todo-text { color: var(--gray-500); text-decoration: line-through; text-decoration-color: var(--gray-300); }
+    .todo-item.pending .todo-text { color: var(--gray-700); }
+
+    /* ─── RECADOS ────────────────────────────────────────── */
+    .recado-banner {
+      display: none; background: var(--gray-50); border-bottom: 1px solid var(--gray-200);
+    }
+    .recado-banner.show { display: block; }
+    .recado-banner-inner {
+      max-width: 1160px; margin: 0 auto; padding: 10px 24px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .rb-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      font-size: 13px; line-height: 1.4;
+    }
+    .rb-row strong { font-weight: 800; }
+    .rb-row.red   { color: var(--st-red-text-strong); }
+    .rb-row.amber { color: var(--st-amber-text-strong); }
+    .rb-row.green { color: var(--st-green-text); }
+    .recado-banner-chip {
+      appearance: none; cursor: pointer; font-family: inherit;
+      background: var(--surface); border: 1px solid currentColor; color: inherit;
+      font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+    }
+    .recado-banner-chip:hover { filter: brightness(1); background: rgba(0,0,0,.03); }
+
+    .recado {
+      border-radius: 10px; padding: 10px 12px; border: 1px solid;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .recado-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .recado-who { font-size: 11.5px; font-weight: 800; }
+    .recado-when { font-size: 10.5px; color: var(--gray-500); }
+    .recado-text { font-size: 12.5px; line-height: 1.45; color: var(--gray-700); }
+    .recado-pill {
+      font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 999px; white-space: nowrap; color: #fff;
+    }
+    .recado.pending  { background: var(--st-red-bg); border-color: var(--st-red-border); }
+    .recado.pending  .recado-pill { background: var(--st-red-solid); }
+    .recado.pending  .recado-who  { color: var(--st-red-text-strong); }
+    .recado.answered { background: var(--st-green-bg); border-color: var(--st-green-border); }
+    .recado.answered .recado-pill { background: var(--st-green-solid); }
+    .recado.answered .recado-who  { color: var(--st-green-text); }
+    .recado.info     { background: var(--gray-50); border-color: var(--gray-200); }
+    .recado.info     .recado-pill { background: var(--gray-400); }
+    .recado.info     .recado-who  { color: var(--gray-600); }
+    .recado.due      { background: var(--st-amber-bg); border-color: var(--st-amber-border); }
+    .recado.due      .recado-pill { background: var(--st-amber-solid); }
+    .recado.due      .recado-who  { color: var(--st-amber-text); }
+
+    /* ─── CALENDÁRIO DE RESPOSTA DIÁRIA ─────────────────── */
+    .cal-day { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--gray-100); }
+    .cal-day:last-child { border-bottom: none; }
+    .cal-day-date { width: 68px; flex-shrink: 0; font-size: 12.5px; font-weight: 800; color: var(--gray-800); }
+    .cal-day-dow { display: block; font-size: 10px; color: var(--gray-400); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .cal-mark {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900;
+    }
+    .cal-mark.done    { background: var(--st-green-bg); color: var(--st-green-text); border: 1px solid var(--st-green-border); }
+    .cal-mark.missed  { background: var(--st-red-bg); color: var(--st-red-text); border: 1px solid var(--st-red-border); }
+    .cal-mark.pending, .cal-mark.waiting, .cal-mark.waited { background: var(--st-amber-bg); color: var(--st-amber-text); border: 1px solid var(--st-amber-border); }
+    .cal-mark.rest    { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-300); }
+    .cal-note { font-size: 12.5px; color: var(--gray-600); line-height: 1.45; flex: 1; padding-top: 1px; }
+
+    .rpill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+      border: 1px solid; align-self: flex-start;
+    }
+    .rpill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .rpill.ready       { color: var(--st-green-text); background: var(--st-green-bg); border-color: var(--st-green-border); }
+    .rpill.almost      { color: var(--st-amber-text); background: var(--st-amber-bg); border-color: var(--st-amber-border-2); }
+    .rpill.in-progress { color: var(--st-blue-text); background: var(--st-blue-bg); border-color: var(--st-blue-border); }
+    .rpill.not-qa      { color: var(--st-neutral-text); background: var(--st-neutral-bg); border-color: var(--st-neutral-border); }
+    .rpill.done        { color: var(--st-green-text); background: var(--st-green-bg); border-color: var(--st-green-border); }
+
+    .btn {
+      appearance: none; font-family: inherit; cursor: pointer;
+      font-size: 12.5px; font-weight: 700; border-radius: 8px; padding: 8px 13px;
+      border: 1px solid var(--brand-mid); background: var(--brand-mid); color: #fff;
+      transition: filter .14s, background .14s;
+      text-decoration: none;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn.ghost { background: var(--surface); color: var(--brand-dark); }
+    .btn.ghost:hover { background: var(--st-tint-bg); }
+    .btn.req { background: var(--surface); color: var(--st-amber-text); border-color: var(--st-amber-border); }
+    .btn.req:hover { background: var(--st-amber-bg); }
+    .btn.req.ready { color: var(--st-green-text); border-color: var(--st-green-border-2); }
+    .btn.req.ready:hover { background: var(--st-green-bg); }
+    .btn[disabled] { opacity: .45; cursor: not-allowed; filter: none; }
+    .btn.danger { background: var(--st-red-solid); border-color: var(--st-red-solid); color: #fff; }
+    .btn.danger:hover { filter: brightness(1.1); }
+
+    /* equal buttons, side by side, pinned to the bottom of the card */
+    .card-actions {
+      margin-top: auto;
+      padding-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    .card-actions > * {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 36px;
+      padding: 8px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.15;
+      text-align: center;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    /* ─── MODAL ──────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(17,24,39,.55);
+      display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.open { display: flex; animation: fadeUp .2s ease; }
+    .modal {
+      background: var(--surface); border-radius: 16px; max-width: 560px; width: 100%;
+      max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+    }
+    .modal-head {
+      padding: 22px 24px 16px; border-bottom: 1px solid var(--gray-200);
+      border-top: 5px solid var(--accent, var(--brand-mid)); border-radius: 16px 16px 0 0;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .modal-head .mh-text { flex: 1; }
+    .modal-id { font-size: 12px; font-weight: 800; color: var(--gray-500); letter-spacing: .04em; }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--gray-900); margin-top: 3px; line-height: 1.3; }
+    .modal-close {
+      appearance: none; border: none; background: var(--gray-100); color: var(--gray-600);
+      width: 32px; height: 32px; border-radius: 8px; font-size: 18px; cursor: pointer; flex-shrink: 0;
+      line-height: 1;
+    }
+    .modal-close:hover { background: var(--gray-200); }
+    .modal-body { padding: 20px 24px 24px; }
+    .modal-block { margin-bottom: 18px; }
+    .modal-block:last-child { margin-bottom: 0; }
+    .modal-block h4 {
+      font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--brand-mid); margin-bottom: 6px;
+    }
+    .modal-block p { font-size: 14px; color: var(--gray-700); line-height: 1.6; }
+    .who {
+      display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700;
+      color: var(--gray-800); background: var(--gray-100); padding: 6px 12px; border-radius: 999px;
+    }
+    .who::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent, var(--brand-mid)); }
+    .modal-alert {
+      background: var(--st-red-bg); border: 1px solid var(--st-red-border); color: var(--st-red-text);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.55;
+    }
+    .modal-alert[hidden] { display: none; }
+    .modal-alert strong { display: block; margin-bottom: 4px; font-size: 13.5px; }
+    .close-box { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 16px; }
+    .close-box .cb-cmd {
+      font-size: 12.5px; color: var(--gray-600); background: var(--surface); border: 1px dashed var(--gray-300);
+      border-radius: 8px; padding: 9px 11px; margin: 10px 0; line-height: 1.5; font-style: italic;
+    }
+    .modal-foot { padding: 0 24px 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .legend {
+      display: flex; gap: 16px; flex-wrap: wrap; margin: 28px 0 4px;
+      font-size: 12px; color: var(--gray-500);
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+    .footnote {
+      max-width: 1160px; margin: 0 auto; padding: 0 24px 48px;
+      font-size: 12px; color: var(--gray-400); line-height: 1.7;
+    }
+    .footnote code { background: var(--gray-100); padding: 1px 5px; border-radius: 4px; color: var(--gray-600); }
+
+    /* ─── TOAST ──────────────────────────────────────────── */
+    .toast {
+      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+      background: var(--ink); color: #fff; font-size: 13px; font-weight: 600;
+      padding: 12px 20px; border-radius: 10px; box-shadow: var(--shadow-lg);
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 80;
+      max-width: 90vw; text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 720px) {
+      .header { padding: 28px 20px 30px; }
+      .header-inner { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+      .header-logo { width: 88px; height: 88px; }
+      .header-logo svg { width: 64px; height: 64px; }
+      .header-title { font-size: 22px; }
+      .header-subtitle { font-size: 13px; }
+      .header-right { margin-left: 0; text-align: center; width: 100%; }
+      .container { padding: 28px 16px 60px; }
+      .section-title { font-size: 20px; }
+      .cards { grid-template-columns: 1fr; }
+      .reading-body h3 { font-size: 17px; }
+      .reading-body p, .reading-body li { font-size: 14px; }
+      .subtab { font-size: 12px; padding: 7px 13px; }
+      .card-actions { gap: 6px; }
+      .card-actions > * { font-size: 11px; padding: 8px 3px; min-height: 34px; }
+      .nav { display: none; }
+      .nav-select { display: block; }
+    }
+    @media (max-width: 380px) {
+      .card-actions > * { font-size: 10.5px; letter-spacing: -.2px; }
+    }
+
+    /* ─── RETESTE ────────────────────────────────────────── */
+    .filterbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin: -8px 0 24px; padding: 12px 14px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--gray-200);
+    }
+    .filterbar .fb-label { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--gray-500); margin-right: 4px; }
+    .fchip {
+      appearance: none; font-family: inherit; cursor: pointer;
+      font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+      border: 1px solid var(--gray-300); background: var(--surface); color: var(--gray-700);
+    }
+    .fchip:hover { background: var(--st-tint-bg); }
+    .fchip.active { background: var(--brand-mid); border-color: var(--brand-mid); color: #fff; }
+
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);
+    }
+    .chip.sound { background: var(--st-blue-bg); color: var(--st-blue-text); border-color: var(--st-blue-border); }
+    .chip.rec { background: var(--st-red-bg); color: var(--st-red-text); border-color: var(--st-red-border); }
+    .chip.rt { background: var(--st-tint-bg); color: var(--brand-dark); border-color: var(--st-tint-border); }
+
+    .steps { margin: 0 0 0 18px; display: flex; flex-direction: column; gap: 4px; }
+    .steps li { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+    .expect {
+      font-size: 13px; line-height: 1.5; color: var(--gray-800);
+      background: var(--st-green-bg); border: 1px solid var(--st-green-border);
+      border-radius: 8px; padding: 9px 11px;
+    }
+    .expect b { color: var(--st-green-text); }
+    .pending-note {
+      font-size: 12.5px; line-height: 1.5; color: var(--st-amber-text-strong);
+      background: var(--st-amber-bg); border: 1px solid var(--st-amber-border-2);
+      border-radius: 8px; padding: 8px 11px;
+    }
+
+    .result { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px dashed var(--gray-200); }
+    .seg { display: flex; gap: 6px; }
+    .seg button {
+      appearance: none; font-family: inherit; cursor: pointer; flex: 1 1 0; min-width: 0;
+      font-size: 12px; font-weight: 700; padding: 8px 4px; border-radius: 8px;
+      border: 1px solid var(--gray-300); background: var(--surface); color: var(--gray-700);
+    }
+    .seg button:hover { background: var(--gray-100); }
+    .seg button.on.pass { background: var(--st-green-solid); border-color: var(--st-green-solid); color: #fff; }
+    .seg button.on.fail { background: var(--st-red-solid); border-color: var(--st-red-solid); color: #fff; }
+    .seg button.on.skip { background: var(--gray-500); border-color: var(--gray-500); color: #fff; }
+    .result textarea {
+      font-family: inherit; font-size: 12.5px; line-height: 1.45; resize: vertical; min-height: 38px;
+      border: 1px solid var(--gray-300); border-radius: 8px; padding: 7px 9px;
+      background: var(--surface); color: var(--gray-800);
+    }
+    .card.is-pass { border-left-color: var(--st-green-solid); background: var(--st-green-bg); }
+    .card.is-fail { border-left-color: var(--st-red-solid); background: var(--st-red-bg); }
+    /* Passou, mas com nota: alerta em âmbar para não passar despercebido */
+    .card.is-pass.has-note { border-left-color: var(--st-amber-solid); background: var(--st-amber-bg); }
+    .card.is-pass.has-note .seg button.on.pass { background: var(--st-amber-solid); border-color: var(--st-amber-solid); }
+    .card.is-pass.has-note .result textarea { border-color: var(--st-amber-border); }
+    .card.is-skip { border-left-color: var(--gray-400); }
+    /* QA aprovou, falta o Auditor: azul, ainda não é verde */
+    .card.is-wait { border-left-color: var(--st-blue-border); background: var(--st-blue-bg); }
+    .seg.seg3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .seg3 .col { display: flex; flex-direction: column; gap: 6px; }
+    .seg3 .col-h { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-500); text-align: center; min-height: 14px; }
+    .seg3 .col button.skip { flex: 1 1 auto; }
+    .seg button:disabled { opacity: .4; cursor: not-allowed; }
+    .seg button:disabled:hover { background: var(--surface); }
+    .seg3 .na-aud { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11.5px; color: var(--gray-500); border: 1px dashed var(--gray-300); border-radius: 8px; padding: 6px; }
+    .aud-status { font-size: 12.5px; font-weight: 700; line-height: 1.5; color: var(--gray-700); }
+    .sumrow.auditFail { border-color: var(--st-red-border); background: var(--st-red-bg); }
+    .sumrow.wait { border-color: var(--st-blue-border); background: var(--st-blue-bg); }
+    .card.na { opacity: .85; }
+
+    .routes { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-bottom: 30px; }
+    .route {
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
+      border-top: 4px solid var(--accent); padding: 16px; box-shadow: var(--shadow);
+    }
+    .route h4 { font-size: 14.5px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; }
+    .route p, .route li { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+    .route ul { margin: 6px 0 0 18px; }
+    .howto {
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
+      padding: 20px 22px; margin-bottom: 26px; box-shadow: var(--shadow);
+    }
+    .howto h3 { font-size: 16px; font-weight: 800; color: var(--gray-900); margin: 0 0 8px; }
+    .howto h3:not(:first-child) { margin-top: 18px; }
+    .howto p, .howto li { font-size: 14px; color: var(--gray-700); line-height: 1.6; }
+    .howto ul, .howto ol { margin: 6px 0 0 20px; }
+    .howto .cmp-wrap { margin-top: 12px; }
+    .howto .cmp td, .howto .cmp th { font-size: 13px; }
+    .howto .tip { margin-top: 12px; font-size: 13px; color: var(--gray-600); background: var(--gray-50); border: 1px dashed var(--gray-300); border-radius: 8px; padding: 9px 12px; line-height: 1.55; }
+    .howto .vlist { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; color: var(--gray-700); }
+
+    .env-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 6px 0 22px; }
+    .env-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--gray-500); }
+    .env-grid input {
+      font-family: inherit; font-size: 13.5px; font-weight: 500; text-transform: none; letter-spacing: 0;
+      border: 1px solid var(--gray-300); border-radius: 8px; padding: 8px 10px; background: var(--surface); color: var(--gray-800);
+    }
+    .sumlist { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 0; }
+    .sumrow {
+      display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--gray-200); background: var(--surface); font-size: 13px; color: var(--gray-700);
+    }
+    .sumrow .walk-row-id { width: 74px; }
+    .sumrow.fail { border-color: var(--st-red-border); background: var(--st-red-bg); }
+    .sumrow.skip { border-color: var(--st-neutral-border); background: var(--st-neutral-bg); }
+    .sum-h { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gray-500); margin: 22px 0 4px; }
+    .empty { font-size: 14px; color: var(--gray-500); padding: 10px 0; }
+
+    /* ─── SALVAR NO ARQUIVO ─────────────────────────────── */
+    .save-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .save-state { font-size: 11.5px; font-weight: 700; color: var(--gray-500); }
+    .save-state.dirty { color: var(--st-amber-text); }
+    .save-state.ok { color: var(--st-green-text); }
+    .save-row .btn { padding: 6px 12px; }
+    .save-mode {
+      display: inline-block; margin-bottom: 10px; font-size: 11.5px; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff;
+    }
+    .save-mode.on { background: #16a34a; }
+    .faq details {
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
+      margin-bottom: 10px; box-shadow: var(--shadow);
+    }
+    .faq summary { cursor: pointer; padding: 14px 18px; font-size: 15px; font-weight: 800; color: var(--gray-900); }
+    .faq details[open] summary { border-bottom: 1px dashed var(--gray-200); }
+    .faq .faq-body { padding: 12px 18px 16px; }
+    .faq p, .faq li { font-size: 14px; color: var(--gray-700); line-height: 1.6; }
+    .faq ul, .faq ol { margin: 6px 0 0 20px; }
+    .faq p + p, .faq p + ul, .faq ul + p, .faq p + ol, .faq ol + p { margin-top: 8px; }
+    .faq code { font-size: 12.5px; background: var(--gray-100); padding: 1px 5px; border-radius: 4px; word-break: break-all; }
+
+    /* ─── ROTEIRO POR RODADAS: barra de escolha, idioma, histórico, comparação ─── */
+    .header-logo .logo-emoji { font-size: 56px; line-height: 1; }
+    .header-toggles { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 8px; }
+    .pickbar-wrap { background: var(--surface); border-bottom: 1px solid var(--gray-200); }
+    .pickbar { max-width: 1160px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-end; }
+    .pick { display: flex; flex-direction: column; gap: 4px; }
+    .pick span { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-500); }
+    .pick select {
+      font-family: inherit; font-size: 14px; font-weight: 700; color: var(--gray-900);
+      background: var(--gray-50); border: 1px solid var(--gray-300); border-radius: 10px; padding: 8px 12px; min-width: 190px;
+    }
+    .pick select:focus { outline: 2px solid var(--brand-mid); outline-offset: 1px; }
+    .pick-hint { font-size: 12.5px; color: var(--gray-500); align-self: center; max-width: 420px; line-height: 1.45; }
+    .showbar { display: flex; gap: 6px; flex-wrap: wrap; margin: -14px 0 18px; }
+    .carry {
+      font-size: 12.5px; font-weight: 700; padding: 7px 10px; border-radius: 8px;
+      border: 1px solid var(--st-neutral-border); background: var(--st-neutral-bg); color: var(--st-neutral-text);
+    }
+    .carry.fail { background: var(--st-red-bg); border-color: var(--st-red-border); color: var(--st-red-text); }
+    .carry.pass { background: var(--st-green-bg); border-color: var(--st-green-border); color: var(--st-green-text); }
+    .hist { font-size: 11.5px; color: var(--gray-500); line-height: 1.6; }
+    .hist b { color: var(--gray-700); }
+    .card.carried { opacity: .72; }
+    .card.carried:hover { opacity: 1; }
+    .cmp-wrap { overflow-x: auto; margin-top: 10px; border: 1px solid var(--gray-200); border-radius: 12px; background: var(--surface); }
+    .cmp { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .cmp th, .cmp td { padding: 8px 10px; border-bottom: 1px solid var(--gray-200); text-align: left; vertical-align: top; }
+    .cmp th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--gray-500); background: var(--gray-50); }
+    .cmp td.c { text-align: center; white-space: nowrap; }
+    .cmp .muted { color: var(--gray-400); }
+    .cmp tr:last-child td { border-bottom: 0; }
+    .na-pill { font-size: 11px; color: var(--gray-400); }
+    @media (max-width: 640px) {
+      .pickbar { padding: 10px 16px; gap: 12px; }
+      .pick select { min-width: 0; width: 100%; }
+      .pick { flex: 1 1 140px; }
+    }
+    /* ─── O QUE O QA VIU: gravidade, texto e prints ─── */
+    .chip.sev-blocker { background: var(--st-red-bg); color: var(--st-red-text); border-color: var(--st-red-border); }
+    .chip.sev-major { background: var(--st-amber-bg); color: var(--st-amber-text); border-color: var(--st-amber-border-2); }
+    .chip.sev-minor { background: var(--st-blue-bg); color: var(--st-blue-text); border-color: var(--st-blue-border); }
+    .chip.sev-cosmetic { background: var(--gray-100); color: var(--gray-700); border-color: var(--gray-200); }
+    .seen {
+      font-size: 13px; color: var(--gray-700); line-height: 1.55;
+      background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 12px;
+    }
+    .shots { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .shots a { flex: 0 0 auto; display: block; border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200); background: var(--gray-100); }
+    .shots img { display: block; height: 150px; width: auto; max-width: 260px; object-fit: cover; }
+    .card.out { opacity: .8; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-logo"><span class="logo-emoji">🧪</span></div>
+      <div>
+        <div class="header-badge" id="hBadge"></div>
+        <div class="header-title" id="hTitle"></div>
+        <div class="header-subtitle" id="hSub"></div>
+      </div>
+      <div class="header-right">
+        <div class="header-toggles">
+          <button class="theme-toggle" id="langToggle" onclick="toggleLang()"></button>
+          <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+            <span id="themeToggleIcon">🌙</span> <span id="themeToggleLabel"></span>
+          </button>
+        </div>
+        <div><span class="save-mode" id="saveMode"></span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pickbar-wrap">
+    <div class="pickbar">
+      <label class="pick" id="pickPlatWrap"><span data-i18n="platform"></span><select id="pickPlat" onchange="setPlat(this.value)"></select></label>
+      <label class="pick"><span data-i18n="round"></span><select id="pickRound" onchange="setRound(this.value)"></select></label>
+      <div class="pick-hint" id="pickHint"></div>
+    </div>
+  </div>
+
+  <nav class="nav-wrapper">
+    <div class="nav" id="navTabs"></div>
+    <select class="nav-select" id="navSelect" onchange="showTab(this.value)"></select>
+  </nav>
+
+  <main class="container" id="main">
+
+    <section id="como" class="tab-content active">
+      <div class="section-label" data-i18n="howLabel"></div>
+      <h2 class="section-title" data-i18n="howTitle"></h2>
+      <p class="section-sub" data-i18n="howSub"></p>
+      <div class="howto" data-i18n="howStart"></div>
+      <div class="howto" data-i18n="howButtons"></div>
+      <div class="howto" data-i18n="howColors"></div>
+      <div class="howto" id="howCards"></div>
+      <div class="howto" data-i18n="howRounds"></div>
+      <div class="howto" data-i18n="howSave"></div>
+    </section>
+
+    <div id="dynTabs"></div>
+
+    <section id="resultado" class="tab-content">
+      <div class="section-label" data-i18n="resLabel"></div>
+      <h2 class="section-title" data-i18n="resTitle"></h2>
+      <p class="section-sub" data-i18n="resSub"></p>
+      <div class="env-grid">
+        <label><span data-i18n="envDevice"></span><input id="env-device" oninput="setEnv('device', this.value)"></label>
+        <label><span data-i18n="envOs"></span><input id="env-os" oninput="setEnv('os', this.value)"></label>
+        <label><span data-i18n="envApp"></span><input id="env-app" oninput="setEnv('app', this.value)"></label>
+      </div>
+      <div id="walk-progress"></div>
+      <div id="summary"></div>
+      <div class="sum-h" data-i18n="cmpTitle"></div>
+      <div class="cmp-wrap" id="compare"></div>
+      <div style="margin-top:22px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" onclick="salvarTudo()" data-i18n="saveAll"></button>
+        <button class="btn" onclick="exportCommand()" data-i18n="copyResult"></button>
+      </div>
+      <p class="empty" id="pendentesSalvar"></p>
+    </section>
+
+    <section id="salvar" class="tab-content">
+      <div class="section-label" data-i18n="saveLabel"></div>
+      <h2 class="section-title" data-i18n="saveTitle"></h2>
+      <p class="section-sub" data-i18n="saveSub"></p>
+      <div class="faq" data-i18n="saveFaq"></div>
+    </section>
+
+  </main>
+
+  <p class="footnote" id="footnote"></p>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- O QUE O CLAUDE ATUALIZA A CADA RODADA: plataformas, variações, rodadas, abas e cards.
+       Atualizar = reescrever SÓ este bloco. A gaveta "dados-salvos" abaixo nunca é reescrita pelo Claude. -->
+  <script type="application/json" id="roteiro-config">{
+ "chave": "exemplo-trilha-dos-bichos",
+ "idiomaPadrao": "pt",
+ "selo": {
+  "pt": "Roteiro de teste · exemplo",
+  "en": "Test checklist · example"
+ },
+ "titulo": {
+  "pt": "Trilha dos Bichos — roteiro de teste (exemplo)",
+  "en": "Animal Trail — test checklist (example)"
+ },
+ "tituloAba": {
+  "pt": "Roteiro de teste — exemplo",
+  "en": "Test checklist — example"
+ },
+ "subtitulo": {
+  "pt": "Modelo de referência da skill <strong>/roteiro-de-teste<\/strong>, com um app inventado: plataformas, rodadas, variações, QA e Auditor num HTML só.",
+  "en": "Reference model for the <strong>/roteiro-de-teste<\/strong> skill, with a made-up app: platforms, rounds, variants, QA and Auditor in a single HTML."
+ },
+ "rodape": {
+  "pt": "Exemplo fictício: o app Trilha dos Bichos não existe, serve só para mostrar como o roteiro funciona. As marcações ficam gravadas neste arquivo.",
+  "en": "Fictional example: the Animal Trail app does not exist; it only shows how the checklist works. Marks are saved inside this file."
+ },
+ "exemplosAparelho": {
+  "device": {
+   "pt": "ex.: iPhone 15 / Pixel 9",
+   "en": "e.g. iPhone 15 / Pixel 9"
+  },
+  "os": {
+   "pt": "ex.: iOS 26 / Android 16",
+   "en": "e.g. iOS 26 / Android 16"
+  },
+  "app": {
+   "pt": "ex.: 2.3.0 (41)",
+   "en": "e.g. 2.3.0 (41)"
+  }
+ },
+ "plataformas": [
+  {
+   "id": "ios",
+   "rotulo": "📱 iOS"
+  },
+  {
+   "id": "android",
+   "rotulo": "🤖 Android"
+  }
+ ],
+ "rodadas": [
+  {
+   "id": "R1",
+   "rotulo": {
+    "pt": "Rodada 1 · só a Floresta",
+    "en": "Round 1 · Forest only"
+   },
+   "curto": "R1"
+  },
+  {
+   "id": "R2",
+   "rotulo": {
+    "pt": "Rodada 2 · chega o Oceano",
+    "en": "Round 2 · Ocean arrives"
+   },
+   "curto": "R2",
+   "retestar": [
+    "T-03"
+   ]
+  },
+  {
+   "id": "R3",
+   "rotulo": {
+    "pt": "Rodada 3 · repasse geral",
+    "en": "Round 3 · full regression"
+   },
+   "curto": "R3",
+   "regressao": true
+  }
+ ],
+ "variacoes": {
+  "rotulo": {
+   "pt": "Estou jogando",
+   "en": "I'm playing"
+  },
+  "todos": {
+   "pt": "Todos",
+   "en": "All"
+  },
+  "todosRotulo": {
+   "pt": "Todas as trilhas",
+   "en": "All trails"
+  },
+  "itens": [
+   {
+    "id": "fl",
+    "rotulo": {
+     "pt": "🌳 Floresta",
+     "en": "🌳 Forest"
+    }
+   },
+   {
+    "id": "oc",
+    "rotulo": {
+     "pt": "🌊 Oceano",
+     "en": "🌊 Ocean"
+    },
+    "desde": "R2"
+   }
+  ]
+ },
+ "abas": [
+  {
+   "id": "inicio",
+   "titulo": {
+    "pt": "🚀 Abertura",
+    "en": "🚀 Opening"
+   },
+   "selo": {
+    "pt": "Começo de cada passeio",
+    "en": "Start of every walk"
+   },
+   "sub": {
+    "pt": "Da tela inicial até o mapa da trilha.",
+    "en": "From the home screen to the trail map."
+   },
+   "cor": "var(--qa)"
+  },
+  {
+   "id": "trilha",
+   "titulo": {
+    "pt": "🐾 Durante a trilha",
+    "en": "🐾 On the trail"
+   },
+   "selo": {
+    "pt": "Durante o passeio",
+    "en": "During the walk"
+   },
+   "sub": {
+    "pt": "Do mapa até o último bicho encontrado.",
+    "en": "From the map to the last animal found."
+   },
+   "cor": "var(--third)"
+  }
+ ],
+ "cards": [
+  {
+   "id": "T-01",
+   "aba": "inicio",
+   "tag": {
+    "pt": "Texto",
+    "en": "Copy"
+   },
+   "corTag": "#6366F1",
+   "desde": "R1",
+   "semAuditoria": true,
+   "titulo": {
+    "pt": "Tela inicial: o botão COMEÇAR diz o nome da trilha",
+    "en": "Home screen: the START button names the trail"
+   },
+   "passos": [
+    {
+     "pt": "Abra o app e passe pelas trilhas no carrossel.",
+     "en": "Open the app and swipe through the trails in the carousel."
+    }
+   ],
+   "passa": {
+    "pt": "O botão diz <b>COMEÇAR &lt;trilha&gt;<\/b> em cada trilha.",
+    "en": "The button reads <b>START &lt;trail&gt;<\/b> on every trail."
+   }
+  },
+  {
+   "id": "T-02",
+   "aba": "inicio",
+   "tag": {
+    "pt": "Layout",
+    "en": "Layout"
+   },
+   "corTag": "var(--qa)",
+   "desde": "R1",
+   "titulo": {
+    "pt": "Todas as telas de abertura cabem sem cortar nada",
+    "en": "Every opening screen fits without clipping"
+   },
+   "passos": [
+    {
+     "pt": "Siga da tela inicial até o mapa.",
+     "en": "Go from the home screen to the map."
+    }
+   ],
+   "passa": {
+    "pt": "Nenhum botão ou texto cortado, nem atrás da barra de status.",
+    "en": "No button or text clipped or hidden behind the status bar."
+   },
+   "qa": [
+    {
+     "rodada": "R1",
+     "plataforma": "android",
+     "gravidade": "minor",
+     "visto": {
+      "pt": "No Pixel, o título do mapa encosta na barra de status.",
+      "en": "On the Pixel, the map title touches the status bar."
+     }
+    }
+   ]
+  },
+  {
+   "id": "T-03",
+   "aba": "trilha",
+   "tag": {
+    "pt": "Fluxo",
+    "en": "Flow"
+   },
+   "corTag": "var(--toclose)",
+   "desde": "R1",
+   "titulo": {
+    "pt": "Depois de achar um bicho, dá para voltar ao mapa",
+    "en": "After finding an animal you can get back to the map"
+   },
+   "passos": [
+    {
+     "pt": "Escaneie o QR code de uma placa.",
+     "en": "Scan a sign's QR code."
+    },
+    {
+     "pt": "Toque em Continuar na ficha do bicho.",
+     "en": "Tap Continue on the animal card."
+    }
+   ],
+   "passa": {
+    "pt": "A ficha tem <b>Continuar<\/b> e volta ao mapa.",
+    "en": "The card has <b>Continue<\/b> and returns to the map."
+   }
+  },
+  {
+   "id": "T-04",
+   "aba": "trilha",
+   "tag": {
+    "pt": "Fluxo",
+    "en": "Flow"
+   },
+   "corTag": "var(--toclose)",
+   "desde": "R1",
+   "plataformas": [
+    "android"
+   ],
+   "ligados": [
+    "T-03"
+   ],
+   "titulo": {
+    "pt": "O voltar do Android no meio da trilha pergunta antes de sair",
+    "en": "Android Back mid-trail asks before leaving"
+   },
+   "passos": [
+    {
+     "pt": "No mapa, aperte o voltar do sistema.",
+     "en": "On the map, press the system Back."
+    }
+   ],
+   "passa": {
+    "pt": "Abre a pergunta <b>Sair da trilha?<\/b>, sem sair direto.",
+    "en": "The <b>Leave the trail?<\/b> question opens instead of leaving at once."
+   }
+  },
+  {
+   "id": "T-05",
+   "aba": "trilha",
+   "tag": {
+    "pt": "Som",
+    "en": "Sound"
+   },
+   "corTag": "#EC4899",
+   "desde": "R1",
+   "variacoes": [
+    "fl"
+   ],
+   "titulo": {
+    "pt": "Floresta: cada bicho toca o seu som",
+    "en": "Forest: each animal plays its own sound"
+   },
+   "passos": [
+    {
+     "pt": "Na Floresta, ache três bichos diferentes.",
+     "en": "In the Forest, find three different animals."
+    }
+   ],
+   "passa": {
+    "pt": "Cada ficha toca o som <b>daquele<\/b> bicho.",
+    "en": "Each card plays <b>that<\/b> animal's sound."
+   }
+  },
+  {
+   "id": "T-06",
+   "aba": "trilha",
+   "tag": {
+    "pt": "Texto",
+    "en": "Copy"
+   },
+   "corTag": "#6366F1",
+   "desde": "R2",
+   "variacoes": [
+    "oc"
+   ],
+   "titulo": {
+    "pt": "Oceano: os peixes têm os nomes das placas",
+    "en": "Ocean: the fish carry the sign names"
+   },
+   "passos": [
+    {
+     "pt": "No Oceano, ache um peixe e abra a ficha.",
+     "en": "In the Ocean, find a fish and open its card."
+    }
+   ],
+   "passa": {
+    "pt": "O nome no app é <b>o mesmo da placa<\/b>.",
+    "en": "The name in the app <b>matches the sign<\/b>."
+   }
+  }
+ ]
+}</script>
+
+  <!-- Gravado pelo botão Salvar (ferramenta ~/Ferramentas/html-salvavel). Não edite à mão. -->
+  <script type="application/json" id="dados-salvos">{}</script>
+
+  <script>
+    /* ─── TEXTOS DA INTERFACE (pt / en) ─────────────────── */
+    const UI = {
+      platform: { pt: 'Plataforma', en: 'Platform' },
+      round: { pt: 'Rodada', en: 'Round' },
+      pass: { pt: '✅ Passou', en: '✅ Passed' },
+      passNote: { pt: '⚠️ Passou c/ nota', en: '⚠️ Passed w/ note' },
+      fail: { pt: '❌ Falhou', en: '❌ Failed' },
+      skip: { pt: '🚫 Não testado', en: '🚫 Not tested' },
+      colQA: { pt: 'QA', en: 'QA' }, colAud: { pt: 'Auditor', en: 'Auditor' },
+      noAudit: { pt: 'sem auditoria', en: 'no audit' },
+      audWaitHint: { pt: 'O Auditor só entra depois que o QA aprova', en: 'The Auditor only comes in after QA passes' },
+      stWait: { pt: '✅ QA aprovou · ⏳ aguardando o Auditor', en: '✅ QA passed · ⏳ waiting for the Auditor' },
+      stAuditFail: { pt: '✅ QA aprovou · ❌ Auditor reprovou (motivo na nota)', en: '✅ QA passed · ❌ Auditor rejected (reason in the note)' },
+      waitLbl: { pt: '⏳ Aguardando Auditor', en: '⏳ Waiting for Auditor' },
+      auditFailLbl: { pt: '🔎❌ Reprovado pelo Auditor', en: '🔎❌ Rejected by Auditor' },
+      cWait: { pt: 'aguardando Auditor', en: 'waiting for Auditor' }, cAuditFail: { pt: 'reprovado pelo Auditor', en: 'rejected by Auditor' },
+      phAudit: { pt: 'Por que o Auditor reprovou', en: 'Why the Auditor rejected it' },
+      carriedWait: { pt: 'Na {r} o QA aprovou e faltou o Auditor', en: 'In {r} QA passed and the Auditor was still missing' },
+      carriedAuditFail: { pt: 'Na {r} o Auditor reprovou: retestar nesta rodada', en: 'In {r} the Auditor rejected it: retest this round' },
+      WAIT: { pt: 'AGUARDANDO AUDITOR', en: 'WAITING FOR AUDITOR' }, AUDITFAIL: { pt: 'REPROVADO PELO AUDITOR', en: 'REJECTED BY AUDITOR' },
+      phFail: { pt: 'O que aconteceu, em qual tela, aparelho', en: 'What happened, on which screen, device' },
+      phSkip: { pt: 'Por que não deu para testar', en: 'Why it could not be tested' },
+      phNote: { pt: 'Nota (opcional)', en: 'Note (optional)' },
+      howToTest: { pt: 'Como testar', en: 'How to test' },
+      passIf: { pt: 'Passa se', en: 'Passes if' },
+      allVariants: { pt: 'Todas as variações', en: 'All variants' },
+      onlyPlat: { pt: 'Só em', en: 'Only on' },
+      newIn: { pt: 'Novo na', en: 'New in' },
+      showToTest: { pt: 'Para testar nesta rodada', en: 'To test this round' },
+      showAll: { pt: 'Todos os cards', en: 'All cards' },
+      carriedPass: { pt: 'Passou na {r}: não precisa retestar (pode marcar se quiser)', en: 'Passed in {r}: no retest needed (you may mark it anyway)' },
+      carriedFail: { pt: 'Falhou na {r}: retestar nesta rodada', en: 'Failed in {r}: retest this round' },
+      carriedSkip: { pt: 'Não testado na {r}: testar nesta rodada', en: 'Not tested in {r}: test this round' },
+      regression: { pt: 'Repasse geral: nesta rodada tudo é retestado', en: 'Full regression: everything is retested this round' },
+      history: { pt: 'Histórico', en: 'History' },
+      notSaved: { pt: '● Não salvo', en: '● Not saved' },
+      savedOk: { pt: '✓ Salvo no arquivo', en: '✓ Saved to file' },
+      saveBtn: { pt: '💾 Salvar', en: '💾 Save' },
+      saveAll: { pt: '💾 Salvar tudo no arquivo', en: '💾 Save everything to file' },
+      copyResult: { pt: '💬 Copiar resultado pro Claude', en: '💬 Copy result for Claude' },
+      modeOn: { pt: '💾 Salvando no arquivo', en: '💾 Saving to file' },
+      modeOff: { pt: '👁 Só leitura', en: '👁 Read-only' },
+      themeDark: { pt: 'Modo escuro', en: 'Dark mode' },
+      themeLight: { pt: 'Modo claro', en: 'Light mode' },
+      langBtn: { pt: '🇺🇸 English', en: '🇧🇷 Português' },
+      howTab: { pt: '📋 Como usar', en: '📋 How to use' },
+      resTab: { pt: '📤 Resultado', en: '📤 Results' },
+      saveTab: { pt: '💾 Salvar no arquivo', en: '💾 Saving to file' },
+      checked: { pt: '{a} / {t} conferidos ({p}%)', en: '{a} / {t} checked ({p}%)' },
+      cPass: { pt: 'passou', en: 'passed' }, cFail: { pt: 'falhou', en: 'failed' },
+      cSkip: { pt: 'não testado', en: 'not tested' }, cPend: { pt: 'pendente', en: 'pending' },
+      pending: { pt: '⬜ Pendente', en: '⬜ Pending' },
+      nothing: { pt: 'Nada marcado ainda nesta rodada.', en: 'Nothing marked yet this round.' },
+      unsavedList: { pt: '● Ainda não salvo no arquivo: {x}.', en: '● Not saved to file yet: {x}.' },
+      cards: { pt: '{n} card(s)', en: '{n} card(s)' }, theDevice: { pt: 'os aparelhos', en: 'the devices' },
+      readOnlyToast: { pt: 'Só leitura: abra pelo atalho abrir-html-salvavel.command para salvar', en: 'Read-only: open it through abrir-html-salvavel.command to save' },
+      saveFailed: { pt: 'Não salvou: {e}. A janela do Terminal está aberta?', en: 'Not saved: {e}. Is the Terminal window open?' },
+      savedToast: { pt: 'Salvo no arquivo: {id}', en: 'Saved to file: {id}' },
+      allSavedToast: { pt: 'Tudo salvo no arquivo', en: 'Everything saved to file' },
+      copiedToast: { pt: 'Resultado copiado: cole no chat com o Claude', en: 'Result copied: paste it in the chat with Claude' },
+      copyFailed: { pt: 'Não consegui copiar automaticamente', en: 'Could not copy automatically' },
+      envDevice: { pt: 'Aparelho', en: 'Device' }, envOs: { pt: 'Versão do sistema', en: 'OS version' }, envApp: { pt: 'Versão do app', en: 'App version' },
+      cmpTitle: { pt: 'Comparação entre plataformas (rodada escolhida)', en: 'Platform comparison (selected round)' },
+      cmpCard: { pt: 'Card', en: 'Card' },
+      cmpLegend: { pt: '↺ = último resultado, de uma rodada anterior · ⬜ = ainda não testado · — = não se aplica a esta plataforma', en: '↺ = latest result, from an earlier round · ⬜ = not tested yet · — = does not apply to this platform' },
+      hint: { pt: 'Você está marcando <b>{p}</b> na <b>{r}</b>. Trocar aqui não apaga nada: cada plataforma e cada rodada guarda a sua marcação.', en: 'You are marking <b>{p}</b> in <b>{r}</b>. Switching here erases nothing: each platform and each round keeps its own mark.' },
+      howLabel: { pt: 'Antes de começar', en: 'Before you start' },
+      howTitle: { pt: 'Um roteiro só, que cresce a cada rodada', en: 'One checklist that grows every round' },
+      howSub: { pt: 'Cada card é <strong>uma coisa para conferir</strong>, com o que conta como <strong>passou</strong>. Escolha a <strong>plataforma</strong> e a <strong>rodada</strong> lá em cima, marque cada card com <strong>Passou</strong>, <strong>Falhou</strong> ou <strong>Não testado</strong> e clique em <strong>💾 Salvar</strong>.', en: 'Each card is <strong>one thing to check</strong>, with what counts as <strong>passed</strong>. Pick the <strong>platform</strong> and the <strong>round</strong> at the top, mark each card <strong>Passed</strong>, <strong>Failed</strong> or <strong>Not tested</strong>, and click <strong>💾 Save</strong>.' },
+      howStart: {
+        pt: '<h3>1 · Em quatro passos</h3><ol><li><strong>Abra pelo app</strong> "Abrir HTML Salvável" (ou pelo atalho <code>abrir-html-salvavel.command</code>). No topo deve aparecer <strong>💾 Salvando no arquivo</strong>.</li><li>Lá em cima, escolha a <strong>Plataforma</strong> (o aparelho que você está usando) e a <strong>Rodada</strong> (a vez de teste).</li><li>Abra uma aba, leia o card, siga o <strong>Como testar</strong> e compare com o <strong>Passa se</strong>.</li><li>Marque o resultado e clique em <strong>💾 Salvar</strong> no próprio card.</li></ol>',
+        en: '<h3>1 · In four steps</h3><ol><li><strong>Open it through the app</strong> "Abrir HTML Salvável" (or the <code>abrir-html-salvavel.command</code> shortcut). The top should read <strong>💾 Saving to file</strong>.</li><li>At the top, pick the <strong>Platform</strong> (the device you are using) and the <strong>Round</strong> (this testing pass).</li><li>Open a tab, read the card, follow <strong>How to test</strong> and compare with <strong>Pass if</strong>.</li><li>Mark the result and click <strong>💾 Save</strong> on the card itself.</li></ol>'
+      },
+      howButtons: {
+        pt: '<h3>2 · Os botões de cada card</h3><div class="cmp-wrap"><table class="cmp"><thead><tr><th>Botão</th><th>Quando usar</th></tr></thead><tbody><tr><td><b>QA · ✅ Passou</b></td><td>Funcionou como diz o "Passa se".</td></tr><tr><td><b>QA · ❌ Falhou</b></td><td>Não funcionou. Escreva na nota o que viu e em qual tela.</td></tr><tr><td><b>Auditor · ✅ / ❌</b></td><td>Só libera depois que o QA aprova. Diz se o trabalho por trás do card seguiu as regras do projeto. Se reprovar, o motivo vai na nota.</td></tr><tr><td><b>🚫 Não testado</b></td><td>Não deu para testar agora. Diga o porquê na nota.</td></tr><tr><td><b>Nota</b></td><td>Uma só por card. Se o QA falhar, é a nota do QA; se o Auditor reprovar, é o motivo dele.</td></tr><tr><td><b>💾 Salvar</b></td><td>Grava este card no arquivo. Clicar de novo num botão marcado desmarca.</td></tr></tbody></table></div>',
+        en: '<h3>2 · The buttons on each card</h3><div class="cmp-wrap"><table class="cmp"><thead><tr><th>Button</th><th>When to use it</th></tr></thead><tbody><tr><td><b>QA · ✅ Passed</b></td><td>It worked the way "Pass if" says.</td></tr><tr><td><b>QA · ❌ Failed</b></td><td>It did not work. Write in the note what you saw and on which screen.</td></tr><tr><td><b>Auditor · ✅ / ❌</b></td><td>Unlocks only after QA passes. Says whether the work behind the card followed the project rules. If it rejects, the reason goes in the note.</td></tr><tr><td><b>🚫 Not tested</b></td><td>Could not test it now. Say why in the note.</td></tr><tr><td><b>Note</b></td><td>One per card. If QA fails, it is the QA note; if the Auditor rejects, it is its reason.</td></tr><tr><td><b>💾 Save</b></td><td>Writes this card into the file. Clicking a marked button again unmarks it.</td></tr></tbody></table></div>'
+      },
+      howColors: {
+        pt: '<h3>3 · O que cada cor quer dizer</h3><div class="cmp-wrap"><table class="cmp"><thead><tr><th>Cor</th><th>Significa</th></tr></thead><tbody><tr><td>⬜ sem cor</td><td>Ninguém testou ainda.</td></tr><tr><td>🔵 azul</td><td>O QA aprovou; <strong>falta o Auditor</strong>.</td></tr><tr><td>🟢 verde</td><td>Pronto: o QA e o Auditor aprovaram (ou o card é "sem auditoria").</td></tr><tr><td>🔴 vermelho</td><td>O QA reprovou, ou o QA aprovou e o Auditor reprovou.</td></tr><tr><td>🟠 âmbar</td><td>Passou, mas tem uma nota para ler.</td></tr><tr><td>apagadinho</td><td>Já passou numa rodada anterior: não precisa testar de novo.</td></tr></tbody></table></div>',
+        en: '<h3>3 · What each colour means</h3><div class="cmp-wrap"><table class="cmp"><thead><tr><th>Colour</th><th>Meaning</th></tr></thead><tbody><tr><td>⬜ no colour</td><td>Nobody tested it yet.</td></tr><tr><td>🔵 blue</td><td>QA passed; <strong>the Auditor is still missing</strong>.</td></tr><tr><td>🟢 green</td><td>Done: QA and the Auditor approved (or the card has "no audit").</td></tr><tr><td>🔴 red</td><td>QA failed, or QA passed and the Auditor rejected.</td></tr><tr><td>🟠 amber</td><td>Passed, but has a note to read.</td></tr><tr><td>faded</td><td>Already passed in an earlier round: no need to test again.</td></tr></tbody></table></div>'
+      },
+      howCardsTitle: { pt: '4 · Quais cards aparecem em cada escolha', en: '4 · Which cards show up for each choice' },
+      howCardsIntro: { pt: 'Um card que vale para <strong>todas</strong> as variações aparece <strong>uma vez só</strong> e é marcado uma vez. Por isso, ao escolher uma variação em "{v}", você vê os cards <strong>dela</strong> mais os que valem para todas. Se um card desses falhar só numa variação, diga qual na nota.', en: 'A card that applies to <strong>all</strong> variants shows <strong>only once</strong> and is marked once. So when you pick a variant in "{v}", you see <strong>its</strong> cards plus the ones that apply to all. If one of those fails in only one variant, say which in the note.' },
+      howCardsIntroNoVar: { pt: 'Estes são os cards deste roteiro e onde cada um vale.', en: 'These are this checklist\'s cards and where each one applies.' },
+      howColCard: { pt: 'Card', en: 'Card' }, howColTab: { pt: 'Aba', en: 'Tab' }, howColVar: { pt: 'Vale para', en: 'Applies to' },
+      howColPlat: { pt: 'Plataformas', en: 'Platforms' }, howColSince: { pt: 'Desde', en: 'Since' },
+      howAllPlats: { pt: 'todas', en: 'all' },
+      howPerVar: { pt: 'Escolhendo cada uma, aparecem:', en: 'Picking each one shows:' },
+      howTipPlat: { pt: 'Um card com "Só 🤖 Android" (por exemplo) some quando a plataforma escolhida é outra. E o botão <strong>"Para testar nesta rodada"</strong> esconde o que já passou antes; use <strong>"Todos os cards"</strong> para ver tudo.', en: 'A card marked "Only 🤖 Android" (for example) disappears when another platform is picked. And <strong>"To test this round"</strong> hides what already passed; use <strong>"All cards"</strong> to see everything.' },
+      howRounds: {
+        pt: '<h3>5 · Rodadas: o que volta para teste</h3><p>Cada rodada é uma nova vez de teste, no mesmo arquivo. O que você marcou nas rodadas anteriores <strong>fica guardado</strong>. Numa rodada nova aparecem:</p><ul><li>os cards <strong>novos</strong> daquela rodada;</li><li>os que <strong>falharam</strong>, ficaram <strong>sem teste</strong> ou foram <strong>reprovados pelo Auditor</strong>;</li><li>os que o dev <strong>alterou</strong> (aviso "↻ Alterado") e os <strong>ligados</strong> a eles (aviso "↻ Ligado a…"), porque mexer em A pode quebrar B;</li><li>numa rodada de <strong>repasse geral</strong> (↺), todos.</li></ul>',
+        en: '<h3>5 · Rounds: what comes back for testing</h3><p>Each round is a new testing pass, in the same file. What you marked in earlier rounds <strong>stays saved</strong>. A new round shows:</p><ul><li>the round\'s <strong>new</strong> cards;</li><li>the ones that <strong>failed</strong>, were <strong>not tested</strong> or were <strong>rejected by the Auditor</strong>;</li><li>the ones the dev <strong>changed</strong> ("↻ Changed") and the ones <strong>linked</strong> to them ("↻ Linked to…"), because changing A may break B;</li><li>in a <strong>full regression</strong> round (↺), all of them.</li></ul>'
+      },
+      howSave: {
+        pt: '<h3>6 · Salvar, de um jeito simples</h3><ul><li><strong>💾 Salvando no arquivo</strong> (verde, no topo): está tudo certo, o Salvar grava dentro deste HTML.</li><li><strong>👁 Só leitura</strong>: o arquivo foi aberto com dois cliques nele. Você vê tudo, mas não salva. Feche e abra pelo app ou pelo atalho.</li><li>Deixe a <strong>janela do Terminal aberta</strong> enquanto testa: é ela que faz o Salvar funcionar.</li><li>Salve card por card, ou tudo de uma vez em <strong>Resultado › Salvar tudo</strong>. Se tentar sair com algo sem salvar, a página avisa.</li><li>Salvou algo errado? Antes de cada gravação fica uma cópia de segurança. Peça ao Claude para restaurar.</li><li>No fim, em <strong>Resultado</strong>, clique em <strong>"Copiar resultado pro Claude"</strong> e cole no chat.</li></ul>',
+        en: '<h3>6 · Saving, the simple way</h3><ul><li><strong>💾 Saving to file</strong> (green, at the top): all good, Save writes into this HTML.</li><li><strong>👁 Read-only</strong>: the file was opened by double-clicking it. You can see everything but cannot save. Close it and open it through the app or the shortcut.</li><li>Keep the <strong>Terminal window open</strong> while testing: it is what makes Save work.</li><li>Save card by card, or everything at once in <strong>Results › Save all</strong>. If you try to leave with unsaved changes, the page warns you.</li><li>Saved something wrong? A backup copy is kept before every write. Ask Claude to restore it.</li><li>At the end, in <strong>Results</strong>, click <strong>"Copy result for Claude"</strong> and paste it in the chat.</li></ul>'
+      },
+      resLabel: { pt: 'Para entregar', en: 'To hand over' },
+      resTitle: { pt: 'Resultado', en: 'Results' },
+      resSub: { pt: 'Preencha o aparelho da plataforma escolhida, confira o resumo e clique em <strong>"Copiar resultado pro Claude"</strong>.', en: 'Fill in the device for the selected platform, check the summary and click <strong>"Copy result for Claude"</strong>.' },
+      saveLabel: { pt: 'Como funciona', en: 'How it works' },
+      saveTitle: { pt: 'Salvar no arquivo', en: 'Saving to file' },
+      saveSub: { pt: 'Este HTML grava as marcações e notas <strong>dentro de si mesmo</strong>.', en: 'This HTML writes marks and notes <strong>into itself</strong>.' },
+      saveFaq: {
+        pt: '<details open><summary>Como abrir para poder salvar</summary><div class="faq-body"><ol><li>Clique no app <strong>Abrir HTML Salvável</strong> no Dock e escolha a pasta deste projeto (ou, na pasta do HTML, dê dois cliques em <code>abrir-html-salvavel.command</code>).</li><li>Abre uma janela do Terminal (deixe aberta) e, no navegador, a lista dos HTMLs salváveis da pasta.</li><li>Clique neste arquivo. No topo aparece <strong>💾 Salvando no arquivo</strong>, em verde.</li></ol><p>Na primeira vez, o Mac pode bloquear o atalho: botão direito › Abrir › Abrir.</p></div></details><details><summary>Abri com dois cliques no HTML. E agora?</summary><div class="faq-body"><p>Você <strong>vê</strong> tudo o que já foi salvo, mas não consegue salvar: o topo mostra <strong>👁 Só leitura</strong>. Abra pelo atalho <code>.command</code>.</p></div></details><details><summary>Salvei algo errado</summary><div class="faq-body"><p>Antes de cada gravação, a versão anterior vai para <code>~/Ferramentas/html-salvavel/backups/</code> (as 30 últimas). Peça ao Claude para restaurar.</p></div></details><details><summary>Instalar em outro Mac</summary><div class="faq-body"><p>Copie a pasta da skill <code>~/.claude/skills/roteiro-de-teste/</code>. O <code>/roteiro-de-teste</code> instala o resto, pedindo antes. Precisa de <code>python3</code>.</p></div></details>',
+        en: '<details open><summary>How to open it so it can save</summary><div class="faq-body"><ol><li>Click the <strong>Abrir HTML Salvável</strong> app in the Dock and pick this project\'s folder (or, in the HTML\'s folder, double-click <code>abrir-html-salvavel.command</code>).</li><li>A Terminal window opens (leave it open) and the browser shows the folder\'s saveable HTMLs.</li><li>Click this file. The top shows <strong>💾 Saving to file</strong>, in green.</li></ol><p>The first time, macOS may block the shortcut: right-click › Open › Open.</p></div></details><details><summary>I double-clicked the HTML itself. Now what?</summary><div class="faq-body"><p>You can <strong>see</strong> everything already saved, but cannot save: the top shows <strong>👁 Read-only</strong>. Open it through the <code>.command</code> shortcut.</p></div></details><details><summary>I saved something wrong</summary><div class="faq-body"><p>Before every write, the previous version goes to <code>~/Ferramentas/html-salvavel/backups/</code> (the last 30). Ask Claude to restore it.</p></div></details><details><summary>Installing on another Mac</summary><div class="faq-body"><p>Copy the skill folder <code>~/.claude/skills/roteiro-de-teste/</code>. Running <code>/roteiro-de-teste</code> installs the rest, asking first. It needs <code>python3</code>.</p></div></details>'
+      },
+      exportIntro: { pt: 'Aqui está o resultado do roteiro "{t}", rodada {r}, preenchido pelo HTML de teste.', en: 'Here is the result of the "{t}" checklist, round {r}, filled in through the test HTML.' },
+      exportAsk: { pt: 'Para cada "Falhou", me mostra o rascunho do achado antes de registrar qualquer coisa.', en: 'For each "Failed", show me the draft finding before filing anything.' },
+      exportDevice: { pt: 'Aparelho', en: 'Device' },
+      exportSummary: { pt: 'Resumo', en: 'Summary' },
+      FAIL: { pt: 'FALHOU', en: 'FAILED' }, SKIP: { pt: 'NÃO TESTADO', en: 'NOT TESTED' }, PASS: { pt: 'PASSOU', en: 'PASSED' }, PEND: { pt: 'PENDENTE', en: 'PENDING' },
+      noteWord: { pt: 'nota', en: 'note' },
+      qaSaw: { pt: 'O que o QA viu', en: 'What QA saw' },
+      shotsHint: { pt: 'clique no print para ampliar', en: 'click a screenshot to enlarge' },
+      retestChanged: { pt: '↻ Alterado: retestar', en: '↻ Changed: retest' }, retestLinked: { pt: '↻ Ligado a', en: '↻ Linked to' },
+      audPass: { pt: '🔎 Auditor aprovou', en: '🔎 Auditor approved' }, audFail: { pt: '🔎 Auditor reprovou', en: '🔎 Auditor rejected' },
+      outOfScope: { pt: 'Fora do escopo', en: 'Out of scope' },
+      sev_blocker: { pt: '🟥 Bloqueia', en: '🟥 Blocker' }, sev_major: { pt: '🟧 Grave', en: '🟧 Major' },
+      sev_minor: { pt: '🟦 Menor', en: '🟦 Minor' }, sev_cosmetic: { pt: '⬜ Cosmético', en: '⬜ Cosmetic' }
+    };
+
+    /* ─── CONFIGURAÇÃO (o que o Claude escreve) ─────────── */
+    const CFG = JSON.parse(document.getElementById('roteiro-config').textContent || '{}');
+    const PLATS = CFG.plataformas || [];
+    const ROUNDS = CFG.rodadas || [];
+    const VAR = CFG.variacoes || null;
+    const TABS = CFG.abas || [];
+    const CARDS = CFG.cards || [];
+    const STORE = 'roteiro_' + (CFG.chave || 'sem-chave');
+
+    let LANG = CFG.idiomaPadrao || 'pt';
+    try { LANG = localStorage.getItem('roteiro_lang') || LANG; } catch (e) {}
+    const L = x => x == null ? '' : typeof x === 'string' ? x : (x[LANG] != null ? x[LANG] : (x.pt != null ? x.pt : x.en || ''));
+    const T = (k, vars) => { let s = L(UI[k]); Object.keys(vars || {}).forEach(v => { s = s.split('{' + v + '}').join(vars[v]); }); return s; };
+
+    /* ─── ESTADO ────────────────────────────────────────── */
+    const ultima = ROUNDS.length ? ROUNDS[ROUNDS.length - 1].id : '';
+    let VIEW = { plat: PLATS.length ? PLATS[0].id : '', round: ultima, variant: 'all', show: 'totest', tab: 'como' };
+    try { VIEW = Object.assign(VIEW, JSON.parse(localStorage.getItem(STORE + '_view') || '{}')); } catch (e) {}
+    if (!PLATS.some(p => p.id === VIEW.plat)) VIEW.plat = PLATS.length ? PLATS[0].id : '';
+    if (!ROUNDS.some(r => r.id === VIEW.round)) VIEW.round = ultima;
+    function saveView() { try { localStorage.setItem(STORE + '_view', JSON.stringify(VIEW)); } catch (e) {} }
+
+    /* marcas[card][plataforma][rodada] = { result, note } — o arquivo manda; o navegador só guarda rascunho. */
+    const clone = o => JSON.parse(JSON.stringify(o || {}));
+    let SALVO = { marcas: {}, env: {} };
+    try {
+      const d = JSON.parse(document.getElementById('dados-salvos').textContent || '{}');
+      if (d.salvoEm) SALVO = { marcas: d.marcas || {}, env: d.env || {} };
+    } catch (e) {}
+    let STATE = clone(SALVO);
+    try {
+      const rascunho = JSON.parse(localStorage.getItem(STORE) || 'null');
+      if (rascunho && rascunho.base === JSON.stringify(SALVO)) STATE = { marcas: rascunho.marcas || {}, env: rascunho.env || {} };
+    } catch (e) {}
+    function save() { try { localStorage.setItem(STORE, JSON.stringify({ base: JSON.stringify(SALVO), marcas: STATE.marcas, env: STATE.env })); } catch (e) {} }
+
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    const roundIdx = id => ROUNDS.findIndex(r => r.id === id);
+    const roundLabel = id => { const r = ROUNDS.find(x => x.id === id); return r ? L(r.rotulo) : id; };
+    const platLabel = id => { const p = PLATS.find(x => x.id === id); return p ? L(p.rotulo) : id; };
+    const curRound = () => ROUNDS.find(r => r.id === VIEW.round) || {};
+
+    function mark(id, plat, round) { return (((STATE.marcas[id] || {})[plat] || {})[round]) || {}; }
+    /* Auditor: liga por padrão; "auditoria": false no config desliga para o roteiro todo, "semAuditoria": true num card. */
+    const AUD = CFG.auditoria !== false;
+    const needsAudit = c => AUD && !c.semAuditoria;
+    /* Estado do card: verde só quando o QA aprovou E o Auditor aprovou (se o card tem auditoria). */
+    function st(c, m) {
+      if (!m || !m.result) return '';
+      if (m.result !== 'pass' || !needsAudit(c)) return m.result;
+      return m.audit === 'pass' ? 'pass' : m.audit === 'fail' ? 'auditFail' : 'wait';
+    }
+    function appliesPlat(c, plat) { return !c.plataformas || !c.plataformas.length || c.plataformas.includes(plat); }
+    function existsIn(c, round) { return roundIdx(c.desde || (ROUNDS[0] || {}).id) <= roundIdx(round); }
+    function prevMark(c, plat, round) {
+      for (let i = roundIdx(round) - 1; i >= 0; i--) {
+        const s = st(c, mark(c.id, plat, ROUNDS[i].id));
+        if (s) return { round: ROUNDS[i].id, result: s };
+      }
+      return null;
+    }
+    /* Por que um card já aprovado volta: o dev alterou ele nesta rodada, ou alterou um card ligado a ele (A pode quebrar B). */
+    function retestReason(c, round) {
+      const alt = ((ROUNDS.find(x => x.id === round) || {}).retestar || []);
+      if (alt.includes(c.id)) return { tipo: 'changed' };
+      const lig = alt.filter(id => (c.ligados || []).includes(id)
+        || ((CARDS.find(x => x.id === id) || {}).ligados || []).includes(c.id));
+      return lig.length ? { tipo: 'linked', ids: lig } : null;
+    }
+    /* Precisa testar nesta rodada: card novo, repasse geral, alterado (ou ligado a um alterado), ou o último resultado não foi "passou". */
+    function needsTest(c, plat, round) {
+      if (c.foraDoEscopo || !appliesPlat(c, plat) || !existsIn(c, round)) return false;
+      const r = ROUNDS.find(x => x.id === round) || {};
+      if (r.regressao || (c.desde || (ROUNDS[0] || {}).id) === round || retestReason(c, round)) return true;
+      const p = prevMark(c, plat, round);
+      return !p || p.result !== 'pass';
+    }
+    const inScope = () => CARDS.filter(c => needsTest(c, VIEW.plat, VIEW.round));
+
+    /* ─── TEXTOS FIXOS, CABEÇALHO E ESCOLHAS ────────────── */
+    function applyStatic() {
+      document.documentElement.lang = LANG === 'en' ? 'en' : 'pt-BR';
+      document.title = L(CFG.tituloAba || CFG.titulo);
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = T(el.dataset.i18n); });
+      document.getElementById('hBadge').textContent = L(CFG.selo);
+      document.getElementById('hTitle').textContent = L(CFG.titulo);
+      document.getElementById('hSub').innerHTML = L(CFG.subtitulo);
+      document.getElementById('footnote').innerHTML = L(CFG.rodape);
+      document.getElementById('langToggle').textContent = T('langBtn');
+      ['device', 'os', 'app'].forEach(k => { const el = document.getElementById('env-' + k); if (el) el.placeholder = L((CFG.exemplosAparelho || {})[k]); });
+      syncThemeToggleUI();
+      syncSaveMode();
+      renderHowCards();
+    }
+    /* "Como usar": tabela de onde cada card vale, montada a partir dos próprios cards. */
+    function renderHowCards() {
+      const el = document.getElementById('howCards');
+      if (!el) return;
+      const temVar = VAR && VAR.itens && VAR.itens.length;
+      const cards = CARDS.filter(c => !c.foraDoEscopo);
+      const varTxt = c => (c.variacoes && c.variacoes.length)
+        ? c.variacoes.map(v => { const it = VAR.itens.find(x => x.id === v); return esc(it ? L(it.rotulo) : v); }).join(', ')
+        : `<b>${esc(L(VAR.todosRotulo) || T('allVariants'))}</b>`;
+      const platTxt = c => (c.plataformas && c.plataformas.length) ? c.plataformas.map(p => esc(platLabel(p))).join(', ') : T('howAllPlats');
+      const tabTxt = c => { const t = TABS.find(x => x.id === c.aba); return t ? L(t.titulo) : esc(c.aba); };
+      let html = `<h3>${T('howCardsTitle')}</h3><p>${temVar ? T('howCardsIntro', { v: esc(L(VAR.rotulo)) }) : T('howCardsIntroNoVar')}</p>`;
+      html += `<div class="cmp-wrap"><table class="cmp"><thead><tr><th>${T('howColCard')}</th><th>${T('howColTab')}</th>${temVar ? `<th>${T('howColVar')}</th>` : ''}${PLATS.length > 1 ? `<th>${T('howColPlat')}</th>` : ''}${ROUNDS.length > 1 ? `<th>${T('howColSince')}</th>` : ''}</tr></thead><tbody>`
+        + cards.map(c => `<tr><td><b>${esc(c.id)}</b> ${L(c.titulo)}</td><td>${tabTxt(c)}</td>${temVar ? `<td>${varTxt(c)}</td>` : ''}${PLATS.length > 1 ? `<td>${platTxt(c)}</td>` : ''}${ROUNDS.length > 1 ? `<td>${esc(roundLabel(c.desde || ROUNDS[0].id))}</td>` : ''}</tr>`).join('')
+        + '</tbody></table></div>';
+      if (temVar) {
+        html += `<p style="margin-top:12px">${T('howPerVar')}</p><div class="vlist">` + VAR.itens.map(v =>
+          `<div><b>${esc(L(v.rotulo))}:</b> ${cards.filter(c => !c.variacoes || !c.variacoes.length || c.variacoes.includes(v.id)).map(c => esc(c.id)).join(', ')}</div>`).join('') + '</div>';
+      }
+      html += `<div class="tip">💡 ${T('howTipPlat')}</div>`;
+      el.innerHTML = html;
+    }
+    function buildPickers() {
+      const sp = document.getElementById('pickPlat');
+      sp.innerHTML = PLATS.map(p => `<option value="${p.id}" ${p.id === VIEW.plat ? 'selected' : ''}>${esc(L(p.rotulo))}</option>`).join('');
+      document.getElementById('pickPlatWrap').style.display = PLATS.length > 1 ? '' : 'none';
+      const sr = document.getElementById('pickRound');
+      sr.innerHTML = ROUNDS.map(r => `<option value="${r.id}" ${r.id === VIEW.round ? 'selected' : ''}>${esc(L(r.rotulo))}${r.regressao ? ' ↺' : ''}</option>`).join('');
+      document.getElementById('pickHint').innerHTML = T('hint', { p: esc(platLabel(VIEW.plat)), r: esc(roundLabel(VIEW.round)) })
+        + (curRound().regressao ? '<br><b>↺ ' + T('regression') + '</b>' : '');
+    }
+    function buildTabs() {
+      document.getElementById('dynTabs').innerHTML = TABS.map(t => `
+        <section id="${t.id}" class="tab-content">
+          ${t.selo ? `<div class="section-label">${L(t.selo)}</div>` : ''}
+          <h2 class="section-title">${L(t.titulo)}</h2>
+          ${t.sub ? `<p class="section-sub">${L(t.sub)}</p>` : ''}
+          ${VAR && VAR.itens && VAR.itens.length ? '<div class="filterbar" data-filterbar></div>' : ''}
+          <div class="showbar" data-showbar></div>
+          <div class="cards" data-render="${t.id}"></div>
+        </section>`).join('');
+      const tabs = [['como', T('howTab')]].concat(TABS.map(t => [t.id, L(t.titulo)]), [['resultado', T('resTab')], ['salvar', T('saveTab')]]);
+      document.getElementById('navTabs').innerHTML = tabs.map(([id, label]) =>
+        `<button class="nav-tab" data-tab="${id}" onclick="showTab('${id}')">${esc(label)} ${id === 'como' || id === 'salvar' ? '' : `<span class="nav-count" data-count="${id}"></span>`}</button>`).join('');
+    }
+
+    /* ─── CARDS ─────────────────────────────────────────── */
+    function cardHTML(c) {
+      const plat = VIEW.plat, round = VIEW.round;
+      const ans = mark(c.id, plat, round);
+      const tab = TABS.find(t => t.id === c.aba) || {};
+      const chips = [];
+      const vars = c.variacoes || [];
+      if (VAR && VAR.itens && VAR.itens.length) {
+        if (!vars.length) chips.push(`<span class="chip">${esc(L(VAR.todosRotulo) || T('allVariants'))}</span>`);
+        else vars.forEach(v => { const it = VAR.itens.find(x => x.id === v); chips.push(`<span class="chip">${esc(it ? L(it.rotulo) : v)}</span>`); });
+      }
+      if (c.plataformas && c.plataformas.length && PLATS.length > 1) chips.push(`<span class="chip rt">${T('onlyPlat')} ${c.plataformas.map(p => esc(platLabel(p))).join(', ')}</span>`);
+      if ((c.desde || (ROUNDS[0] || {}).id) === round && roundIdx(round) > 0) chips.push(`<span class="chip sound">${T('newIn')} ${esc(roundLabel(round))}</span>`);
+      const rr = retestReason(c, round);
+      if (rr) chips.push(`<span class="chip sound">${rr.tipo === 'changed' ? T('retestChanged') : T('retestLinked') + ' ' + rr.ids.map(esc).join(', ')}</span>`);
+      (c.chips || []).forEach(x => chips.push(`<span class="chip">${esc(L(x))}</span>`));
+
+      const prev = prevMark(c, plat, round);
+      const carried = !ans.result && prev && prev.result === 'pass' && !needsTest(c, plat, round);
+      let carry = '';
+      if (prev && !ans.result) {
+        const k = { pass: needsTest(c, plat, round) ? null : 'carriedPass', fail: 'carriedFail', auditFail: 'carriedAuditFail', wait: 'carriedWait', skip: 'carriedSkip' }[prev.result];
+        if (k) carry = `<div class="carry ${prev.result === 'auditFail' ? 'fail' : prev.result}">${T(k, { r: esc(roundLabel(prev.round)) })}</div>`;
+      }
+      const qa = qaHTML(c, plat, round);
+      if (qa.sev) chips.unshift(`<span class="chip sev-${qa.sev}">${T('sev_' + qa.sev)}</span>`);
+      const est = st(c, ans);
+      const cls = c.foraDoEscopo ? 'out' : carried ? 'carried' : est === 'pass' ? 'is-pass' + (temNota(ans) ? ' has-note' : '') : est === 'fail' || est === 'auditFail' ? 'is-fail' : est === 'wait' ? 'is-wait' : est === 'skip' ? 'is-skip' : '';
+      const ph = est === 'auditFail' ? T('phAudit') : ans.result === 'fail' ? T('phFail') : ans.result === 'skip' ? T('phSkip') : T('phNote');
+      return `
+        <div class="card ${cls}" style="--accent:${tab.cor || 'var(--qa)'}" data-id="${c.id}">
+          <div class="card-top">
+            <span class="card-id">${esc(c.id)}</span>
+            ${c.tag ? `<span class="tag" style="background:${c.corTag || 'var(--gray-500)'}">${esc(L(c.tag))}</span>` : ''}
+          </div>
+          <div class="card-title">${L(c.titulo)}</div>
+          <div class="chips">${chips.join('')}</div>
+          <div class="todo-title">${T('howToTest')}</div>
+          <ol class="steps">${(c.passos || []).map(s => `<li>${L(s)}</li>`).join('')}</ol>
+          <div class="todo-title">${T('passIf')}</div>
+          <div class="expect">${L(c.passa)}</div>
+          ${c.aviso ? `<div class="pending-note">⚠ ${L(c.aviso)}</div>` : ''}
+          ${qa.html}
+          ${carry}
+          ${c.foraDoEscopo ? `<span class="rpill not-qa">${T('outOfScope')}: ${L(c.foraDoEscopo)}</span>` : `
+          <div class="result">
+            <div class="seg seg3" role="group">
+              <div class="col"><div class="col-h">${T('colQA')}</div>
+                <button class="pass ${ans.result === 'pass' ? 'on' : ''}" onclick="setResult('${c.id}','pass')">${est === 'pass' && temNota(ans) ? T('passNote') : T('pass')}</button>
+                <button class="fail ${ans.result === 'fail' ? 'on' : ''}" onclick="setResult('${c.id}','fail')">${T('fail')}</button>
+              </div>
+              <div class="col"><div class="col-h">${T('colAud')}</div>${needsAudit(c) ? `
+                <button class="pass aud ${ans.audit === 'pass' ? 'on' : ''}" ${ans.result === 'pass' ? '' : `disabled title="${esc(T('audWaitHint'))}"`} onclick="setAudit('${c.id}','pass')">${T('pass')}</button>
+                <button class="fail aud ${ans.audit === 'fail' ? 'on' : ''}" ${ans.result === 'pass' ? '' : `disabled title="${esc(T('audWaitHint'))}"`} onclick="setAudit('${c.id}','fail')">${T('fail')}</button>` : `
+                <div class="na-aud">${T('noAudit')}</div>`}
+              </div>
+              <div class="col"><div class="col-h"></div>
+                <button class="skip ${ans.result === 'skip' ? 'on' : ''}" onclick="setResult('${c.id}','skip')">${T('skip')}</button>
+              </div>
+            </div>
+            ${est === 'wait' ? `<div class="aud-status">${T('stWait')}</div>` : est === 'auditFail' ? `<div class="aud-status">${T('stAuditFail')}</div>` : ''}
+            <textarea rows="2" placeholder="${esc(ph)}" oninput="setNote('${c.id}', this.value)">${esc(ans.note)}</textarea>
+            <div class="save-row">${saveRowHTML(c.id)}</div>
+          </div>`}
+          ${histHTML(c)}
+          ${c.link ? `<div class="card-actions"><a class="btn ghost" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(L(c.linkRotulo) || 'Link')} ↗</a></div>` : ''}
+        </div>`;
+    }
+    /* O que o QA viu nesta plataforma, da rodada mais recente até a escolhida. */
+    function qaHTML(c, plat, round) {
+      const ents = (c.qa || []).filter(q => (!q.plataforma || q.plataforma === plat) && roundIdx(q.rodada) <= roundIdx(round))
+        .sort((a, b) => roundIdx(b.rodada) - roundIdx(a.rodada));
+      if (!ents.length) return { html: '', sev: '' };
+      const pasta = CFG.pastaPrints || '';
+      const html = ents.map(q => `
+          <div class="todo-title">${T('qaSaw')} · ${esc(q.plataforma ? platLabel(q.plataforma) : '')} ${esc(roundLabel(q.rodada))}</div>
+          <div class="seen">${L(q.visto)}</div>
+          ${q.auditor ? `<div class="seen"><b>${T(q.auditor.veredito === 'pass' ? 'audPass' : 'audFail')}</b>${q.auditor.visto ? ' · ' + L(q.auditor.visto) : ''}</div>` : ''}
+          ${(q.prints || []).length ? `<div class="shots" title="${esc(T('shotsHint'))}">${q.prints.map(f => `<a href="${esc(pasta + f)}" target="_blank" rel="noopener"><img src="${esc(pasta + f)}" alt="${esc(f)}" loading="lazy"></a>`).join('')}</div>` : ''}`).join('');
+      return { html, sev: ents[0].gravidade || '' };
+    }
+    const ICON = { pass: '✅', fail: '❌', skip: '🚫', wait: '⏳', auditFail: '🔎❌' };
+    function histHTML(c) {
+      const linhas = PLATS.filter(p => appliesPlat(c, p.id)).map(p => {
+        const ms = ROUNDS.filter(r => mark(c.id, p.id, r.id).result).map(r => `${esc(L(r.curto || r.rotulo))} ${ICON[st(c, mark(c.id, p.id, r.id))]}`);
+        return ms.length ? `<b>${esc(L(p.rotulo))}:</b> ${ms.join(' · ')}` : '';
+      }).filter(Boolean);
+      return linhas.length ? `<div class="hist">${T('history')} — ${linhas.join(' &nbsp;|&nbsp; ')}</div>` : '';
+    }
+    function visibleCards(tabId) {
+      return CARDS.filter(c => c.aba === tabId && appliesPlat(c, VIEW.plat) && existsIn(c, VIEW.round)
+        && (VIEW.show === 'all' || c.foraDoEscopo || needsTest(c, VIEW.plat, VIEW.round) || mark(c.id, VIEW.plat, VIEW.round).result)
+        && (VIEW.variant === 'all' || !(c.variacoes || []).length || c.variacoes.includes(VIEW.variant)));
+    }
+    function render() {
+      TABS.forEach(t => {
+        const el = document.querySelector(`[data-render="${t.id}"]`);
+        const list = visibleCards(t.id);
+        el.innerHTML = list.length ? list.map(cardHTML).join('') : `<p class="empty">${T('nothing')}</p>`;
+        const c = document.querySelector(`[data-count="${t.id}"]`);
+        if (c) c.textContent = list.length;
+      });
+      renderFilters();
+      updateProgress();
+    }
+    function rerenderCard(id) {
+      const c = CARDS.find(x => x.id === id);
+      const el = document.querySelector(`.card[data-id="${id}"]`);
+      if (!c || !el) return;
+      const wrap = document.createElement('div');
+      wrap.innerHTML = cardHTML(c).trim();
+      el.replaceWith(wrap.firstChild);
+    }
+
+    /* ─── FILTROS: variação e "o que mostrar" ───────────── */
+    function renderFilters() {
+      if (VAR && VAR.itens && VAR.itens.length) {
+        const opts = [['all', L(VAR.todos) || 'Todos']].concat(VAR.itens.filter(v => !v.desde || roundIdx(v.desde) <= roundIdx(VIEW.round)).map(v => [v.id, L(v.rotulo)]));
+        document.querySelectorAll('[data-filterbar]').forEach(bar => {
+          bar.innerHTML = `<span class="fb-label">${esc(L(VAR.rotulo))}</span>` + opts.map(([v, l]) =>
+            `<button class="fchip ${VIEW.variant === v ? 'active' : ''}" onclick="setVariant('${v}')">${esc(l)}</button>`).join('');
+        });
+      }
+      document.querySelectorAll('[data-showbar]').forEach(bar => {
+        bar.innerHTML = [['totest', T('showToTest')], ['all', T('showAll')]].map(([v, l]) =>
+          `<button class="fchip ${VIEW.show === v ? 'active' : ''}" onclick="setShow('${v}')">${esc(l)}</button>`).join('');
+      });
+    }
+    function setVariant(v) { VIEW.variant = v; saveView(); render(); }
+    function setShow(v) { VIEW.show = v; saveView(); render(); }
+    function setPlat(p) { VIEW.plat = p; saveView(); buildPickers(); fillEnv(); render(); atualizarPendentes(); }
+    function setRound(r) { VIEW.round = r; saveView(); buildPickers(); render(); atualizarPendentes(); }
+
+    /* ─── RESPOSTAS ─────────────────────────────────────── */
+    function slot(id) {
+      STATE.marcas[id] = STATE.marcas[id] || {};
+      STATE.marcas[id][VIEW.plat] = STATE.marcas[id][VIEW.plat] || {};
+      STATE.marcas[id][VIEW.plat][VIEW.round] = STATE.marcas[id][VIEW.plat][VIEW.round] || {};
+      return STATE.marcas[id][VIEW.plat][VIEW.round];
+    }
+    function setResult(id, result) {
+      const s = slot(id);
+      s.result = s.result === result ? '' : result;
+      if (s.result !== 'pass') delete s.audit;   // sem aprovação do QA, não há auditoria
+      save(); rerenderCard(id); updateProgress(); atualizarPendentes();
+    }
+    function setAudit(id, v) {
+      const s = slot(id);
+      if (s.result !== 'pass') { toast(T('audWaitHint')); return; }
+      s.audit = s.audit === v ? '' : v;
+      if (!s.audit) delete s.audit;
+      save(); rerenderCard(id); updateProgress(); atualizarPendentes();
+    }
+    function temNota(ans) { return !!((ans || {}).note || '').trim(); }
+    function setNote(id, value) {
+      const s = slot(id);
+      s.note = value;
+      // Atualiza o alerta âmbar sem redesenhar o card (o cursor continua na nota)
+      const card = document.querySelector(`.card[data-id="${id}"]`);
+      if (card) {
+        const alerta = st(CARDS.find(x => x.id === id) || {}, s) === 'pass' && temNota(s);
+        card.classList.toggle('has-note', alerta);
+        const bt = card.querySelector('.seg button.pass');
+        if (bt) bt.textContent = alerta ? T('passNote') : T('pass');
+      }
+      save(); renderSummary(); atualizarSaveRow(id); atualizarPendentes();
+    }
+    function setEnv(key, value) {
+      STATE.env[VIEW.plat] = STATE.env[VIEW.plat] || {};
+      STATE.env[VIEW.plat][key] = value; save(); atualizarPendentes();
+    }
+    function fillEnv() {
+      const e = (STATE.env || {})[VIEW.plat] || {};
+      ['device', 'os', 'app'].forEach(k => { const el = document.getElementById('env-' + k); if (el) el.value = e[k] || ''; });
+    }
+
+    /* ─── SALVAR NO ARQUIVO ─────────────────────────────── */
+    const NOME_ARQUIVO = decodeURIComponent(location.pathname.split('/').pop() || '');
+    let PODE_SALVAR = false;
+    /* Tira marcas vazias, para "nada marcado" e "objeto vazio" contarem igual. */
+    function limpo(m) {
+      const out = {};
+      Object.keys(m || {}).forEach(p => Object.keys(m[p] || {}).forEach(r => {
+        const a = m[p][r] || {}, res = a.result || '', note = a.note || '', aud = a.audit || '';
+        if (res || note || aud) { out[p] = out[p] || {}; out[p][r] = { result: res, note, audit: aud }; }
+      }));
+      return out;
+    }
+    function cardSujo(id) { return JSON.stringify(limpo(STATE.marcas[id])) !== JSON.stringify(limpo(SALVO.marcas[id])); }
+    function cardSalvo(id) { const a = ((SALVO.marcas[id] || {})[VIEW.plat] || {})[VIEW.round] || {}; return !!(a.result || a.note || a.audit); }
+    function envSujo() { return JSON.stringify(STATE.env || {}) !== JSON.stringify(SALVO.env || {}); }
+    function saveRowHTML(id) {
+      const sujo = cardSujo(id);
+      const estado = sujo ? `<span class="save-state dirty">${T('notSaved')}</span>`
+        : cardSalvo(id) ? `<span class="save-state ok">${T('savedOk')}</span>` : '<span class="save-state"></span>';
+      return `${estado}<button class="btn" onclick="salvarCard('${id}')" ${sujo ? '' : 'disabled'}>${T('saveBtn')}</button>`;
+    }
+    function atualizarSaveRow(id) {
+      const row = document.querySelector(`.card[data-id="${id}"] .save-row`);
+      if (row) row.innerHTML = saveRowHTML(id);
+    }
+    function atualizarPendentes() {
+      const n = CARDS.filter(c => !c.foraDoEscopo && cardSujo(c.id)).length;
+      const partes = [];
+      if (n) partes.push(T('cards', { n }));
+      if (envSujo()) partes.push(T('theDevice'));
+      const el = document.getElementById('pendentesSalvar');
+      if (el) el.textContent = partes.length ? T('unsavedList', { x: partes.join(' + ') }) : '';
+    }
+    async function gravarNoArquivo(novo) {
+      if (!PODE_SALVAR) { toast(T('readOnlyToast')); return false; }
+      try {
+        const r = await fetch('/__salvavel/salvar?arquivo=' + encodeURIComponent(NOME_ARQUIVO), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Salvavel': '1' },
+          body: JSON.stringify({ versao: 2, salvoEm: new Date().toISOString(), marcas: novo.marcas, env: novo.env })
+        });
+        const j = await r.json();
+        if (!j.ok) throw new Error(j.erro || 'erro desconhecido');
+        SALVO = clone(novo);
+        save();
+        return true;
+      } catch (e) {
+        toast(T('saveFailed', { e: e.message || e }));
+        return false;
+      }
+    }
+    async function salvarCard(id) {
+      const novo = clone(SALVO);
+      const m = limpo(STATE.marcas[id]);
+      if (Object.keys(m).length) novo.marcas[id] = m; else delete novo.marcas[id];
+      if (await gravarNoArquivo(novo)) { atualizarSaveRow(id); atualizarPendentes(); toast(T('savedToast', { id })); }
+    }
+    async function salvarTudo() {
+      const marcas = {};
+      Object.keys(STATE.marcas).forEach(id => { const m = limpo(STATE.marcas[id]); if (Object.keys(m).length) marcas[id] = m; });
+      if (await gravarNoArquivo({ marcas, env: clone(STATE.env) })) {
+        CARDS.forEach(c => atualizarSaveRow(c.id)); atualizarPendentes(); toast(T('allSavedToast'));
+      }
+    }
+    function syncSaveMode() {
+      const el = document.getElementById('saveMode');
+      el.textContent = PODE_SALVAR ? T('modeOn') : T('modeOff');
+      el.classList.toggle('on', PODE_SALVAR);
+    }
+    async function detectarServidor() {
+      if (location.protocol.startsWith('http')) {
+        try { PODE_SALVAR = (await (await fetch('/__salvavel/status', { cache: 'no-store' })).json()).ok === true; } catch (e) {}
+      }
+      syncSaveMode();
+    }
+    window.addEventListener('beforeunload', e => {
+      if (CARDS.some(c => cardSujo(c.id)) || envSujo()) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    /* ─── PROGRESSO, RESUMO E COMPARAÇÃO ────────────────── */
+    function counts() {
+      const c = { pass: 0, fail: 0, skip: 0, wait: 0, auditFail: 0, pending: 0 };
+      inScope().forEach(x => { const r = st(x, mark(x.id, VIEW.plat, VIEW.round)); c[r || 'pending']++; });
+      return c;
+    }
+    function updateProgress() {
+      const c = counts(), total = inScope().length;
+      const answered = total - c.pending;
+      const pct = total ? Math.round(answered / total * 100) : 0;
+      document.getElementById('walk-progress').innerHTML = `
+        <div class="walk-progress-top">
+          <span class="walk-progress-label">${esc(platLabel(VIEW.plat))} · ${esc(roundLabel(VIEW.round))} — ${T('checked', { a: answered, t: total, p: pct })}</span>
+          <span class="walk-progress-counts">
+            <span>✅ ${c.pass} ${T('cPass')}</span><span>❌ ${c.fail} ${T('cFail')}</span>${AUD ? `<span>⏳ ${c.wait} ${T('cWait')}</span><span>🔎❌ ${c.auditFail} ${T('cAuditFail')}</span>` : ''}<span>🚫 ${c.skip} ${T('cSkip')}</span><span>⬜ ${c.pending} ${T('cPend')}</span>
+          </span>
+        </div>
+        <div class="walk-progress-bar-track"><div class="walk-progress-bar-fill" style="width:${pct}%"></div></div>`;
+      const nav = document.querySelector('[data-count="resultado"]');
+      if (nav) nav.textContent = c.pending;
+      renderSummary();
+      renderCompare();
+      buildNavSelect();
+    }
+    function renderSummary() {
+      const groups = [['fail', T('fail')], ['auditFail', T('auditFailLbl')], ['wait', T('waitLbl')], ['skip', T('skip')], ['pass', T('pass')], ['', T('pending')]];
+      let html = '';
+      groups.forEach(([r, label]) => {
+        const rows = inScope().filter(c => st(c, mark(c.id, VIEW.plat, VIEW.round)) === r);
+        if (!rows.length) return;
+        html += `<div class="sum-h">${label} (${rows.length})</div><div class="sumlist">` + rows.map(c => {
+          const note = mark(c.id, VIEW.plat, VIEW.round).note;
+          return `<div class="sumrow ${r}"><span class="walk-row-id">${esc(c.id)}</span><span>${L(c.titulo)}${note ? ` — <em>${esc(note)}</em>` : ''}</span></div>`;
+        }).join('') + '</div>';
+      });
+      document.getElementById('summary').innerHTML = html || `<p class="empty">${T('nothing')}</p>`;
+    }
+    /* Célula: marca desta rodada; senão, a última anterior (↺); "—" se o card não vale para a plataforma. */
+    function cellFor(c, plat) {
+      if (!appliesPlat(c, plat)) return '<span class="muted">—</span>';
+      const m = mark(c.id, plat, VIEW.round);
+      if (m.result) return ICON[st(c, m)];
+      const p = prevMark(c, plat, VIEW.round);
+      return p ? `<span class="muted">↺ ${ICON[p.result]}</span>` : '<span class="muted">⬜</span>';
+    }
+    function renderCompare() {
+      const el = document.getElementById('compare');
+      const cards = CARDS.filter(c => !c.foraDoEscopo && existsIn(c, VIEW.round));
+      if (!cards.length || !PLATS.length) { el.innerHTML = ''; return; }
+      el.innerHTML = `<table class="cmp"><thead><tr><th>${T('cmpCard')}</th>${PLATS.map(p => `<th class="c">${esc(L(p.rotulo))}</th>`).join('')}</tr></thead><tbody>`
+        + cards.map(c => `<tr><td><b>${esc(c.id)}</b> ${L(c.titulo)}</td>${PLATS.map(p => `<td class="c">${cellFor(c, p.id)}</td>`).join('')}</tr>`).join('')
+        + `</tbody></table><p class="na-pill" style="padding:8px 10px">${T('cmpLegend')}</p>`;
+    }
+
+    /* ─── EXPORTAR ──────────────────────────────────────── */
+    function exportCommand() {
+      const plain = s => String(s).replace(/<[^>]+>/g, '');
+      const parts = [T('exportIntro', { t: plain(L(CFG.titulo)), r: plain(roundLabel(VIEW.round)) }), T('exportAsk')];
+      PLATS.forEach(p => {
+        const scope = CARDS.filter(c => needsTest(c, p.id, VIEW.round));
+        if (!scope.length) return;
+        const e = (STATE.env || {})[p.id] || {};
+        const c = { pass: 0, fail: 0, skip: 0, wait: 0, auditFail: 0, '': 0 };
+        scope.forEach(x => c[st(x, mark(x.id, p.id, VIEW.round))]++);
+        parts.push('', `=== ${plain(L(p.rotulo))} ===`,
+          `${T('exportDevice')}: ${e.device || '?'} · ${e.os || '?'} · app ${e.app || '?'}`,
+          `${T('exportSummary')}: ${c.pass} ${T('cPass')} · ${c.fail} ${T('cFail')}${AUD ? ` · ${c.wait} ${T('cWait')} · ${c.auditFail} ${T('cAuditFail')}` : ''} · ${c.skip} ${T('cSkip')} · ${c['']} ${T('cPend')} (${scope.length})`);
+        [['fail', 'FAIL'], ['auditFail', 'AUDITFAIL'], ['wait', 'WAIT'], ['skip', 'SKIP'], ['pass', 'PASS'], ['', 'PEND']].forEach(([r, k]) => {
+          const rows = scope.filter(x => st(x, mark(x.id, p.id, VIEW.round)) === r);
+          if (rows.length) parts.push('', `${T(k)} (${rows.length}):`, ...rows.map(x => {
+            const n = mark(x.id, p.id, VIEW.round).note;
+            return `- ${x.id} — ${plain(L(x.titulo))}${n ? ' — ' + T('noteWord') + ': ' + n.replace(/\s+/g, ' ').trim() : ''}`;
+          }));
+        });
+      });
+      copyText(parts.join('\n'));
+    }
+    function copyText(t) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(() => toast(T('copiedToast')), () => fallbackCopy(t));
+      } else { fallbackCopy(t); }
+    }
+    function fallbackCopy(t) {
+      const ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); toast(T('copiedToast')); }
+      catch (e) { toast(T('copyFailed')); }
+      document.body.removeChild(ta);
+    }
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    /* ─── TEMA E IDIOMA ─────────────────────────────────── */
+    function syncThemeToggleUI() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.getElementById('themeToggleIcon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('themeToggleLabel').textContent = isDark ? T('themeLight') : T('themeDark');
+    }
+    function toggleTheme() {
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('ssq_theme', next); } catch (e) {}
+      syncThemeToggleUI();
+    }
+    function toggleLang() {
+      LANG = LANG === 'en' ? 'pt' : 'en';
+      try { localStorage.setItem('roteiro_lang', LANG); } catch (e) {}
+      boot();
+    }
+
+    /* ─── ABAS ──────────────────────────────────────────── */
+    function showTab(id) {
+      if (!document.getElementById(id)) id = 'como';
+      document.querySelectorAll('.tab-content').forEach(s => s.classList.toggle('active', s.id === id));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+      const sel = document.getElementById('navSelect');
+      if (sel && sel.value !== id) sel.value = id;
+      VIEW.tab = id; saveView();
+    }
+    function buildNavSelect() {
+      const sel = document.getElementById('navSelect');
+      sel.innerHTML = '';
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        let label = '';
+        btn.childNodes.forEach(n => { if (n.nodeType === 3) label += n.textContent; });
+        const countEl = btn.querySelector('.nav-count');
+        const count = countEl ? countEl.textContent.trim() : '';
+        const opt = document.createElement('option');
+        opt.value = btn.dataset.tab;
+        opt.textContent = label.replace(/\s+/g, ' ').trim() + (count ? '  (' + count + ')' : '');
+        if (btn.dataset.tab === VIEW.tab) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    /* ─── INÍCIO ────────────────────────────────────────── */
+    function boot() {
+      applyStatic();
+      buildPickers();
+      buildTabs();
+      fillEnv();
+      render();
+      showTab(VIEW.tab);
+      atualizarPendentes();
+    }
+    boot();
+    detectarServidor();
+  </script>
+</body>
+</html>

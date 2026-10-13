@@ -5,7 +5,7 @@ description: Analyze the current project, decide what must be tested by hand on 
 
 # /roteiro-de-teste
 
-The owner's own tool, also shared with a partner. It turns "what this product does and what changed" into a checklist that is opened in the browser, tested by hand and marked, with each mark saved **inside the HTML file**. Talk to the person in their language. Call them by their login name: the part of the terminal prompt before the `@` (the output of `whoami`, e.g. `tonnybrito`); if it cannot be read, call them "Dev-Tester". If their CLAUDE.md says how to work with them (language, tutor style, one thing at a time, asking before every action), follow it.
+The owner's own tool, also shared with a partner. It turns "what this product does and what changed" into a checklist that is opened in the browser, tested by hand and marked, with each mark saved **inside the HTML file**. Talk to the person in their language. Call them by the name they chose, saved in `~/Ferramentas/html-salvavel/nome.txt` (step 1 asks for it). Until there is one, use their login name: the part of the terminal prompt before the `@` (the output of `whoami`); if it cannot be read, call them "Dev-Tester". If their CLAUDE.md says how to work with them (language, tutor style, one thing at a time, asking before every action), follow it.
 
 **One file per product, growing round by round.** A product with 60 sessions is tested from session 1. Each run of this skill adds a **round** (rodada) with the new cards and sends back for retest whatever failed before. Nothing that was saved is ever lost.
 
@@ -27,7 +27,8 @@ The owner's own tool, also shared with a partner. It turns "what this product do
 
 ## 1. Prepare the saving (ask first)
 
-- If `~/Ferramentas/html-salvavel/` is missing or differs from `pacote/` (`diff -rq`, excluding `backups/`), propose copying `pacote/` over it with `cp -Rp`, never touching `backups/`. Then `chmod +x` the `.command` and `servidor.py`. If `python3` is missing, explain the "Instalar" steps in `pacote/LEIA-ME.md`.
+- **The person's name.** If `~/Ferramentas/html-salvavel/nome.txt` is missing or empty, ask once, in their language: "Como você gostaria de ser chamado?" (offer their `whoami` name as the default). Save the answer, one line, in that file, and use it from then on. If they say to change it later, rewrite the file.
+- If `~/Ferramentas/html-salvavel/` is missing or differs from `pacote/` (`diff -rq`, excluding `backups/`, `nome.txt` and `ultimos-projetos.txt`), propose copying `pacote/` over it with `cp -Rp`, never touching `backups/`, `nome.txt` or `ultimos-projetos.txt`. Then `chmod +x` the `.command` and `servidor.py`. If `python3` is missing, explain the "Instalar" steps in `pacote/LEIA-ME.md`.
 - **The Dock app.** If `~/Applications/Abrir HTML Salvável.app` is missing, offer to build it: `zsh ~/Ferramentas/html-salvavel/app/instalar-app.sh`. Then explain: drag it from `~/Applications` to the Dock; the first click explains and asks for the project folder; macOS may ask to let it control Terminal (OK).
 - Optionally (the app already covers it), propose copying `abrir-html-salvavel.command` in list mode (`ARQUIVO=""`) into the HTML's folder, usually the project root, with `cp -p`. Remind the person that the first time it needs right-click › Abrir › Abrir, so macOS lets it run.
 - Recommend keeping the HTML, the shortcut and the screenshots folder out of git through `.git/info/exclude`.

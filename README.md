@@ -28,7 +28,7 @@ Eles leem o projeto, os testes e o git. Para lerem também um sistema de tarefas
 
 1. Copie esta pasta para `~/.claude/skills/roteiro-de-teste`.
 2. Abra um projeto no Claude Code e digite `/roteiro-de-teste`.
-3. Na primeira vez, a skill propõe instalar a ferramenta de salvar em `~/Ferramentas/html-salvavel/`, o app **"Abrir HTML Salvável"** para o Dock (macOS) e os dois agentes — sempre perguntando antes.
+3. Na primeira vez, a skill pergunta **como você gostaria de ser chamado** e guarda o nome em `~/Ferramentas/html-salvavel/nome.txt` (para trocar depois, é só pedir). Depois propõe instalar a ferramenta de salvar em `~/Ferramentas/html-salvavel/`, o app **"Abrir HTML Salvável"** para o Dock (macOS) e os dois agentes — sempre perguntando antes.
 
 O passo a passo ilustrado está em [`COMO-USAR.html`](COMO-USAR.html).
 

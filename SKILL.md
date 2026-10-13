@@ -5,7 +5,7 @@ description: Analyze the current project, decide what must be tested by hand on 
 
 # /roteiro-de-teste
 
-The owner's own tool, also shared with a partner. It turns "what this product does and what changed" into a checklist that is opened in the browser, tested by hand and marked, with each mark saved **inside the HTML file**. Talk to the person in their language. For Tonny that means pt-BR, tutor style, one thing at a time, asking before every action (his global CLAUDE.md).
+The owner's own tool, also shared with a partner. It turns "what this product does and what changed" into a checklist that is opened in the browser, tested by hand and marked, with each mark saved **inside the HTML file**. Talk to the person in their language. Call them by their login name: the part of the terminal prompt before the `@` (the output of `whoami`, e.g. `tonnybrito`); if it cannot be read, call them "Dev-Tester". If their CLAUDE.md says how to work with them (language, tutor style, one thing at a time, asking before every action), follow it.
 
 **One file per product, growing round by round.** A product with 60 sessions is tested from session 1. Each run of this skill adds a **round** (rodada) with the new cards and sends back for retest whatever failed before. Nothing that was saved is ever lost.
 

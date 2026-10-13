@@ -37,7 +37,7 @@ The owner's own tool, also shared with a partner. It turns "what this product do
   - **present and identical:** nothing to do;
   - **present but different:** show the difference and ask. Never overwrite the person's own version without a yes.
   
-  The bundled agents read the project, its tests and git; they do not read a task tracker by themselves. To let them read one (Linear, Jira…), add that tracker's MCP tools to the `tools:` line of each agent.
+  The bundled agents read the project, its tests and git; they do not read a task tracker by themselves. To let them read one, add that tracker's MCP tools to the `tools:` line of each agent.
 
 ## 2. First run or new round?
 
@@ -49,7 +49,7 @@ Look for an existing checklist in the project: `grep -l 'id="roteiro-config"' *.
 
 Read these in order and skip whatever does not exist:
 1. The project's `CLAUDE.md`, `README`, `spec/` and decision records.
-2. Linear, when the project is linked to it. It is read-only here; this skill never writes to it.
+2. The project's task tracker, if it has one and its tools are available (optional). It is read-only here; this skill never writes to it.
 3. Git (`git log`, tags, `gh pr list` / `gh pr view`), for what changed since the last round.
 4. The code, only to see where a change shows up for the person using the product.
 
@@ -79,7 +79,7 @@ When the product can be run here (emulator, simulator or browser), offer to send
 ### The approval loop (a card is green only when both approve)
 
 1. **QA tests.** A card the QA fails or could not test **does not go to the Auditor**.
-2. **The Auditor reviews only what the QA passed.** For each passed card it checks whether the work behind it followed the project's rules: issue, branch, commits, spec, no AI signature, and Linear matching reality. Give it the linked issue or PR of each card. A passed card with nothing to audit (no issue, PR or commits behind it) is left out, and the hand-over says so. What it saw goes into the same `qa` entry as `"auditor": {"veredito": "pass" | "fail", "visto": "..."}`, shown under what the QA saw. Its verdict itself is the card's **Auditor column** (`audit`). Mark a card with nothing to audit `"semAuditoria": true` (its Auditor column reads "sem auditoria" and the QA pass alone makes it green); a project with no Auditor at all sets `"auditoria": false` in the config.
+2. **The Auditor reviews only what the QA passed.** For each passed card it checks whether the work behind it followed the project's rules: issue, branch, commits, spec, no AI signature, and the task tracker (if any) matching reality. Give it the linked issue or PR of each card. A passed card with nothing to audit (no issue, PR or commits behind it) is left out, and the hand-over says so. What it saw goes into the same `qa` entry as `"auditor": {"veredito": "pass" | "fail", "visto": "..."}`, shown under what the QA saw. Its verdict itself is the card's **Auditor column** (`audit`). Mark a card with nothing to audit `"semAuditoria": true` (its Auditor column reads "sem auditoria" and the QA pass alone makes it green); a project with no Auditor at all sets `"auditoria": false` in the config.
 3. **Rejected by the QA or by the Auditor → the executor fixes it.** The executor is whoever builds the code (the dev, or the dev's coding session following the project's own flow). This skill does not fix code: it hands over the findings and asks before anything goes to the executor.
 4. **After the fix, the loop starts again from step 1**: the QA retests, and if it passes, the Auditor reviews again. The fix is a change, so the rules below for changed and linked cards apply.
 5. **A card is green only when the QA passed it and the Auditor approved it** (or it is `semAuditoria`). The page derives the card's state from the two columns:

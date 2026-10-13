@@ -63,7 +63,7 @@
     <h2><span class="num">1</span>O que ela faz</h2>
     <p>Você pede ao Claude e ele:</p>
     <ol>
-      <li><strong>Lê o projeto</strong> que está aberto: as regras, a especificação, as issues do Linear e o histórico do git. Descobre em quais <strong>plataformas</strong> ele roda (iOS, Android, Web) e se tem <strong>variações</strong> (por exemplo, um jogo com uma trilha da Floresta e outra do Oceano).</li>
+      <li><strong>Lê o projeto</strong> que está aberto: as regras, a especificação, o histórico do git e, se houver, o sistema de tarefas (opcional, só leitura). Descobre em quais <strong>plataformas</strong> ele roda (iOS, Android, Web) e se tem <strong>variações</strong> (por exemplo, um jogo com uma trilha da Floresta e outra do Oceano).</li>
       <li><strong>Decide o que precisa ser testado à mão</strong> e te mostra a lista antes de montar. Um card que vale para todas as variações aparece <strong>uma vez só</strong>.</li>
       <li>Se o app puder rodar aqui (emulador, simulador ou navegador), oferece mandar o <strong>QA independente</strong> testar, uma plataforma por vez. O que o QA viu entra no card, com prints.</li>
       <li>Depois, o <strong>Auditor</strong> confere só os cards que o QA <strong>aprovou</strong>: vê se o trabalho seguiu as regras do projeto (issue, branch, commits). Se o QA ou o Auditor reprovar, quem programa corrige, o QA testa de novo e o Auditor revisa de novo. <strong>Um card só fica verde quando os dois aprovam.</strong></li>
@@ -121,7 +121,7 @@
       <tr><td><code>COMO-USAR.html</code></td><td>Este tutorial.</td></tr>
       <tr><td><code>ferramentas/</code></td><td>O ajudante que o Claude usa para criar o HTML e acrescentar rodadas sem tocar no que você salvou.</td></tr>
       <tr><td><code>pacote/app/</code></td><td>O app <strong>Abrir HTML Salvável</strong> para o Dock: o roteiro dele, o ícone e o <code>instalar-app.sh</code>, que monta o app.</td></tr>
-      <tr><td><code>pacote/agentes/</code></td><td>Cópias do QA e do Auditor. Se o computador não tiver esses agentes, o Claude pergunta e instala em <code>~/.claude/agents/</code>. Depois é preciso reabrir o Claude Code. Eles leem o projeto, os testes e o git; para lerem também um sistema de tarefas (Linear, Jira…), acrescente as ferramentas dele na linha <code>tools:</code> de cada agente.</td></tr>
+      <tr><td><code>pacote/agentes/</code></td><td>Cópias do QA e do Auditor. Se o computador não tiver esses agentes, o Claude pergunta e instala em <code>~/.claude/agents/</code>. Depois é preciso reabrir o Claude Code. Eles leem o projeto, os testes e o git; para lerem também um sistema de tarefas (opcional, só leitura), acrescente as ferramentas dele na linha <code>tools:</code> de cada agente.</td></tr>
       <tr><td><code>pacote/</code></td><td>As peças que fazem o HTML salvar: o modelo dos cards, o mini-servidor e o atalho. É a cópia-mestre; o Claude instala a partir dela.</td></tr>
     </table>
   </section>

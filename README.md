@@ -22,7 +22,7 @@ A pasta `pacote/agentes/` traz dois agentes do Claude Code:
 
 Na primeira vez, a skill confere se eles estão em `~/.claude/agents/` e, com a sua permissão, instala. Depois de instalar, reinicie o Claude Code uma vez (os agentes carregam quando a sessão começa).
 
-Eles leem o projeto, os testes e o git. Para lerem também um sistema de tarefas (Linear, Jira…), acrescente as ferramentas dele na linha `tools:` de cada agente.
+Eles leem o projeto, os testes e o git. Para lerem também um sistema de tarefas (opcional, só leitura), acrescente as ferramentas dele na linha `tools:` de cada agente.
 
 ## Instalar
 

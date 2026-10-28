@@ -1,0 +1,22 @@
+appId: ${APP}
+# Easter end-game: dialogs -> awaken flame -> capture boss -> FINISH GAME.
+# Storyboard frames keyed by ${THEME} into screenshots/flow-<THEME>/.
+---
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-1-story"
+- repeat:
+    while:
+        notVisible: "flame-easter"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-2-flame"
+- longPressOn: "flame-easter"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-3-boss"
+- longPressOn: "PumpkinBoss-Captured-easter"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-4-finish"
+- tapOn: "FINISH GAME"

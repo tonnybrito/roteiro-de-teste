@@ -1,0 +1,28 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Shared post-FINISH-GAME cleanup: quit the leaderboard and return to the carousel.
+# THEME (optional) enables a storyboard frame of the results / "Trail Completed" screen.
+---
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "screenshots/flow-${THEME}/end-7-results"
+- tapOn: "QUIT"
+- tapOn:
+    id: "navigationBackButton"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "navigationBackButton"
+- waitForAnimationToEnd:
+    timeout: 1500
+- runFlow:
+    when:
+        visible: .*Leaving Game.*
+    commands:
+        - tapOn: "LEAVE"
+- runFlow:
+    when:
+        visible:
+            id: "alertDialogSecondaryButton"
+    commands:
+        - tapOn:
+            id: "alertDialogSecondaryButton"

@@ -1,0 +1,49 @@
+appId: ${APP}
+# July 4th end-game (11 beats): congrats -> darkness -> call the guardian (hold) ->
+# eagle video -> report -> DJ table (hold) -> fireworks video -> Happy 4th ->
+# Full Hat -> FINISH GAME. Videos are waited out with extendedWaitUntil.
+# Storyboard frames keyed by ${THEME} into screenshots/flow-<THEME>/.
+---
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-1-congrats"
+# Beat 1 is now the day->night transition VIDEO (was a static screen) — grab a frame.
+- tapOn:
+    text: "Next"
+    waitUntilVisible: true
+- waitForAnimationToEnd:
+    timeout: 1800
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-1b-darkness"
+- repeat:
+    while:
+        notVisible: "call-guardian-july4"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-2-call-guardian"
+- longPressOn: "call-guardian-july4"
+- extendedWaitUntil:
+    visible: "firefighter-lucky-july4"
+    timeout: 25000
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-3-eagle"
+- repeat:
+    while:
+        notVisible: "flame-july4"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-4-flame"
+- longPressOn: "flame-july4"
+- extendedWaitUntil:
+    visible: "bunny-found-2-july4"
+    timeout: 25000
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-5-bunny"
+- repeat:
+    while:
+        notVisible: "FINISH GAME"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-6-finish"
+- tapOn: "FINISH GAME"

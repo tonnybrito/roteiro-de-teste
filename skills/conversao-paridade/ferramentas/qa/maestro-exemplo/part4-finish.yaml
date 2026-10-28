@@ -1,0 +1,88 @@
+appId: ${APP}
+# Part 4: results -> QUIT -> credits -> the 4 product links -> choose another trail -> carousel
+---
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: "shots/${DEV}/${THEME}-16-hunt-completed"
+- scroll
+- takeScreenshot: "shots/${DEV}/${THEME}-16b-hunt-completed-scrolled"
+- runFlow:
+    when:
+        visible:
+            id: "quitButton"
+    commands:
+        - tapOn:
+            id: "quitButton"
+- runFlow:
+    when:
+        visible: "^(QUIT|Quit)$"
+    commands:
+        - tapOn: "^(QUIT|Quit)$"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: "shots/${DEV}/${THEME}-17-credits"
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_teeTimeTrainer"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_teeTimeTrainer"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad1-tee-time-trainer"
+- launchApp:
+    stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_teeTimeThrills"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_teeTimeThrills"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad2-tee-time-thrills"
+- launchApp:
+    stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_koineQuest"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_koineQuest"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad3-koine-quest"
+- launchApp:
+    stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_studioWebsite"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_studioWebsite"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad4-studio-site"
+- launchApp:
+    stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-17b-credits-after-ads"
+- scrollUntilVisible:
+    element:
+        id: "creditsChooseAnotherSeekButton"
+    direction: DOWN
+- tapOn:
+    id: "creditsChooseAnotherSeekButton"
+- waitForAnimationToEnd:
+    timeout: 4000
+- extendedWaitUntil:
+    visible: "Choose your adventure"
+    timeout: 20000
+- takeScreenshot: "shots/${DEV}/${THEME}-19-back-to-carousel"

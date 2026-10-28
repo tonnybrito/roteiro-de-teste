@@ -1,0 +1,160 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Captures all 9 creatures. Parameterized via env:
+#   TRAP_TARGET  - what to long-press to capture ("idle" for Halloween/Xmas,
+#                  "trap-default-<theme>" for Easter/July4)
+#   CAPTURE_TEXT - text asserted on the reward card ("Pin Collected", etc.)
+#   THEME        - storyboard folder name (screenshots/flow-<THEME>/)
+# A second CONTINUE is tapped only if it appears (Halloween shows an extra screen).
+# Assumes the hub tutorial has already been advanced (done per-theme in the hunt).
+#
+# For every capture this records three storyboard frames:
+#   cap-Na-grid  - the hub / "hat" with N-1 creatures already collected
+#   cap-Nb-found - the creature found in the world, before trapping
+#   cap-Nc-card  - the reward card (creature trapped, running X/9 count)
+---
+- takeScreenshot: "screenshots/flow-${THEME}/cap-1a-grid"
+- tapOn:
+    id: "trapSlot_0"
+- tapOn:
+    text: .*Permitir*
+    optional: true
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-1b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-1c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-2a-grid"
+- tapOn:
+    id: "trapSlot_1"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-2b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-2c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-3a-grid"
+- tapOn:
+    id: "trapSlot_2"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-3b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-3c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-4a-grid"
+- tapOn:
+    id: "trapSlot_3"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-4b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-4c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-5a-grid"
+- tapOn:
+    id: "trapSlot_4"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-5b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-5c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-6a-grid"
+- tapOn:
+    id: "trapSlot_5"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-6b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-6c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-7a-grid"
+- tapOn:
+    id: "trapSlot_6"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-7b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-7c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-8a-grid"
+- tapOn:
+    id: "trapSlot_7"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-8b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-8c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"
+
+- takeScreenshot: "screenshots/flow-${THEME}/cap-9a-grid"
+- tapOn:
+    id: "trapSlot_8"
+- tapOn:
+    id: "debugCaptureButton"
+- takeScreenshot: "screenshots/flow-${THEME}/cap-9b-found"
+- longPressOn: ${TRAP_TARGET}
+- assertVisible: ${CAPTURE_TEXT}
+- takeScreenshot: "screenshots/flow-${THEME}/cap-9c-card"
+- tapOn: "CONTINUE"
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - tapOn: "CONTINUE"

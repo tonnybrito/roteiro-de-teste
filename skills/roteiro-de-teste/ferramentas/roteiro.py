@@ -8,6 +8,10 @@
   python3 roteiro.py ler    <arquivo.html>                 imprime {"config": ..., "dados": ...}
 
 O bloco dados-salvos (a "gaveta") é de quem testa: só o botão Salvar escreve nele.
+
+BDD (opcional): "bdd": {"arquivo": "BDD/bdd-<projeto>.html"} no config, com o caminho relativo
+ao roteiro, e "bdd": ["L-03", ...] em cada card. novo/config conferem que o arquivo existe e
+que cada id é um cenário dele (class="cen" id="…").
 """
 import json, re, shutil, sys, time
 from pathlib import Path
@@ -43,8 +47,31 @@ def checa(cfg):
         erros += [f'variação {v}' for v in c.get('variacoes', []) if v not in vars_]
         erros += [f"qa.rodada {q.get('rodada')}" for q in c.get('qa', []) if q.get('rodada') not in rodadas]
         erros += [f'ligado {i}' for i in c.get('ligados', []) if i not in ids]
+        if c.get('bdd') and not (cfg.get('bdd') or {}).get('arquivo'):
+            erros.append('bdd.arquivo no config (o card cita cenários do BDD)')
+        for q in c.get('qa', []):
+            k = q.get('comparacao')
+            if k is None:
+                continue
+            falta = [x for x in ('a', 'b', 'diff', 'la', 'lb', 'raw', 'aligned', 'dy', 'cells') if x not in k]
+            if falta or not isinstance(k.get('cells'), list):
+                erros.append(f"qa {q.get('rodada')}: comparacao sem {falta or ['cells como lista']} (gere com comparar.py)")
         if erros:
             sys.exit(f"card {c['id']}: não existe {', '.join(erros)}")
+
+
+def checa_bdd(cfg, alvo):
+    """O BDD citado existe ao lado do roteiro e tem cada cenário que os cards apontam."""
+    arq = (cfg.get('bdd') or {}).get('arquivo')
+    if not arq:
+        return
+    bdd = (alvo.resolve().parent / arq)
+    if not bdd.is_file():
+        sys.exit(f'bdd.arquivo {arq}: não existe {bdd}')
+    cenarios = set(re.findall(r'class="cen" id="([^"]+)"', bdd.read_text(encoding='utf-8')))
+    falta = [f"{c['id']}→{i}" for c in cfg.get('cards', []) for i in c.get('bdd', []) if i not in cenarios]
+    if falta:
+        sys.exit(f'cenários que não existem em {arq}: {falta}')
 
 
 def backup(alvo):
@@ -124,6 +151,7 @@ def main():
         print('backup', copia); print('ok', alvo, 'página atualizada; cards e marcações iguais')
         return
     cfg = ler_cfg(sys.argv[3])
+    checa_bdd(cfg, alvo)
     if cmd == 'novo':
         if alvo.exists():
             sys.exit(f'{alvo} já existe: use "config" para atualizar, nunca "novo"')

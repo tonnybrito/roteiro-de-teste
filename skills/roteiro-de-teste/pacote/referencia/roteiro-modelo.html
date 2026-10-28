@@ -418,6 +418,13 @@
     .btn:hover { filter: brightness(1.08); }
     .btn.ghost { background: var(--surface); color: var(--brand-dark); }
     .btn.ghost:hover { background: var(--st-tint-bg); }
+    /* BDD: link to the project's BDD page (config "bdd") and to each card's scenarios */
+    .header-bdd:empty { display: none; }
+    .header-bdd { margin-top: 8px; }
+    .header-bdd a, .bdd-links a { font-size: 12px; font-weight: 700; text-decoration: none; border-radius: 999px; padding: 3px 10px;
+      border: 1px solid var(--brand-mid); color: var(--brand-dark); background: var(--surface); display: inline-block; }
+    .header-bdd a:hover, .bdd-links a:hover { background: var(--st-tint-bg); }
+    .bdd-links { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; font-size: 12px; color: var(--gray-500); }
     .btn.req { background: var(--surface); color: var(--st-amber-text); border-color: var(--st-amber-border); }
     .btn.req:hover { background: var(--st-amber-bg); }
     .btn.req.ready { color: var(--st-green-text); border-color: var(--st-green-border-2); }
@@ -732,6 +739,30 @@
     .shots a { flex: 0 0 auto; display: block; border-radius: 8px; overflow: hidden; border: 1px solid var(--gray-200); background: var(--gray-100); }
     .shots img { display: block; height: 150px; width: auto; max-width: 260px; object-fit: cover; }
     .card.out { opacity: .8; }
+
+    /* Comparação (qa[].comparacao): um visualizador escuro, igual no claro e no escuro */
+    .cmpbox{margin:10px 0 4px;border:1px solid #2a2f3a;border-radius:12px;padding:10px;background:#11141b;color:#e9ecf2}
+    .cmp-head{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px}
+    .cmp-b{font-weight:700;padding:2px 9px;border-radius:999px}.cmp-ok{background:#14381f;color:#6fe3a0}.cmp-warn{background:#3d3210;color:#f3d06a}.cmp-bad{background:#3f1416;color:#ff8f93}.cmp-n{background:#232836;color:#9aa3b2}
+    .cmp-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:8px 0}.cmp-tabs button{font:inherit;font-size:12px;white-space:nowrap;text-align:center;padding:5px 2px;border-radius:8px;border:1px solid #2a2f3a;background:#232836;color:#e9ecf2;cursor:pointer}.cmp-tabs button.on{background:#7c9cff;color:#0b0d12}
+    .cmp-v{display:none}.cmp-v.on{display:block}.cmp-side.on{display:flex;gap:10px;justify-content:center}
+    .cmp-side figure{margin:0;text-align:center;width:min(240px,48%)}.cmp-side img{width:100%;border-radius:8px}.cmp-side figcaption{font-size:11px;opacity:.75}
+    .cmp-stage{position:relative;width:min(260px,100%);aspect-ratio:360/780;margin:auto;border-radius:8px;overflow:hidden}.cmp-stage img{position:absolute;inset:0;width:100%;height:100%}
+    .cmp-top{position:absolute;inset:0;clip-path:inset(0 0 0 var(--x,50%))}.cmp-bar{position:absolute;top:0;bottom:0;left:var(--x,50%);width:2px;background:#fff;box-shadow:0 0 6px #000}
+    .cmpbox input[type=range]{display:block;width:min(260px,100%);margin:8px auto 0}.cmp-hint{font-size:11px;opacity:.75;text-align:center;margin:4px 0}
+    .cmp-blink .cmp-b2{animation:cmpbl 1.2s steps(1) infinite}@keyframes cmpbl{0%{opacity:0}50%{opacity:1}}
+    .cmp-grid{position:absolute;inset:0;display:grid}.cmp-cell{border:1px dashed #ffffff26;display:flex;justify-content:flex-end;align-items:flex-start;padding:1px}.cmp-cell span{font-size:10px;font-weight:700;background:#000a;border-radius:3px;padding:0 3px}
+    .cmp-cell.hi span{color:#6fe3a0}.cmp-cell.mid span{color:#f3d06a}.cmp-cell.lo span{color:#ff8f93}.cmp-cell.worst{border:2px solid #ffd400}
+    .cmp-zoom{margin-left:auto;font:inherit;font-size:12px;padding:3px 10px;border-radius:8px;border:1px solid #7c9cff;background:transparent;color:#9fb4ff;cursor:pointer}
+    .cmpbox img{cursor:zoom-in}
+    .cmpbox.cmp-full{position:fixed;inset:0;z-index:9999;margin:0;border-radius:0;background:#0b0d12;overflow:auto;padding:16px 20px}
+    .cmpbox.cmp-full img{cursor:default}
+    .cmpbox.cmp-full .cmp-side figure{width:min(46vw, calc(40vh))}
+    .cmpbox.cmp-full .cmp-stage{width:min(92vw, calc(82vh * 360 / 780))}
+    .cmpbox.cmp-full input[type=range]{width:min(92vw, calc(82vh * 360 / 780))}
+    .cmpbox.cmp-full .cmp-cell span{font-size:14px}
+    .cmpbox.cmp-full .cmp-head{font-size:15px;position:sticky;top:-16px;background:#0b0d12;padding:8px 0;z-index:2}.cmpbox.cmp-full .cmp-tabs button{font-size:15px;padding:6px 14px}
+    @media (max-width:600px){.cmpbox{padding:8px}.cmp-head{font-size:11px;gap:6px}.cmp-side figure{width:48%}.cmp-tabs button{font-size:11px}}
   </style>
 </head>
 <body>
@@ -743,6 +774,7 @@
         <div class="header-badge" id="hBadge"></div>
         <div class="header-title" id="hTitle"></div>
         <div class="header-subtitle" id="hSub"></div>
+        <div class="header-bdd" id="hBdd"></div>
       </div>
       <div class="header-right">
         <div class="header-toggles">
@@ -1144,6 +1176,18 @@
   <script>
     /* ─── TEXTOS DA INTERFACE (pt / en) ─────────────────── */
     const UI = {
+      bddHeader: { pt: '📘 Ver o BDD deste projeto ↗', en: "📘 See this project's BDD ↗" },
+      bddCard: { pt: 'Cenários no BDD:', en: 'BDD scenarios:' },
+      cvTitle: { pt: 'Comparação', en: 'Comparison' },
+      cvRaw: { pt: 'nota bruta', en: 'raw score' },
+      cvAligned: { pt: 'depois de alinhar', en: 'after aligning' },
+      cvShift: { pt: 'deslocamento', en: 'shift' },
+      cvZoom: { pt: '⤢ Ampliar', en: '⤢ Enlarge' }, cvClose: { pt: '✕ Fechar', en: '✕ Close' },
+      cvSide: { pt: 'Lado a lado', en: 'Side by side' }, cvCurtain: { pt: 'Cortina', en: 'Curtain' },
+      cvBlink: { pt: 'Piscar', en: 'Blink' }, cvDiff: { pt: 'Diff', en: 'Diff' },
+      cvCurtainHint: { pt: 'Arraste: esquerda {a} · direita {b}', en: 'Drag: left {a} · right {b}' },
+      cvBlinkHint: { pt: 'Os dois se alternam no mesmo lugar', en: 'Both alternate in the same place' },
+      cvDiffHint: { pt: 'magenta = mais claro no {a} · ciano = mais claro no {b} · caixa amarela = 3 piores regiões', en: 'magenta = lighter on {a} · cyan = lighter on {b} · yellow box = 3 worst regions' },
       platform: { pt: 'Plataforma', en: 'Platform' },
       round: { pt: 'Rodada', en: 'Round' },
       pass: { pt: '✅ Passou', en: '✅ Passed' },
@@ -1270,6 +1314,8 @@
     const ROUNDS = CFG.rodadas || [];
     const VAR = CFG.variacoes || null;
     const TABS = CFG.abas || [];
+    // BDD of the project (config "bdd": {"arquivo": path relative to this HTML}); cards list scenario ids in "bdd".
+    const BDD = (CFG.bdd && CFG.bdd.arquivo) || '';
     const CARDS = CFG.cards || [];
     const STORE = 'roteiro_' + (CFG.chave || 'sem-chave');
 
@@ -1352,6 +1398,7 @@
       document.getElementById('hTitle').textContent = L(CFG.titulo);
       document.getElementById('hSub').innerHTML = L(CFG.subtitulo);
       document.getElementById('footnote').innerHTML = L(CFG.rodape);
+      document.getElementById('hBdd').innerHTML = BDD ? `<a href="${esc(BDD)}" target="_blank" rel="noopener">${T('bddHeader')}</a>` : '';
       document.getElementById('langToggle').textContent = T('langBtn');
       ['device', 'os', 'app'].forEach(k => { const el = document.getElementById('env-' + k); if (el) el.placeholder = L((CFG.exemplosAparelho || {})[k]); });
       syncThemeToggleUI();
@@ -1469,10 +1516,29 @@
             <div class="save-row">${saveRowHTML(c.id)}</div>
           </div>`}
           ${histHTML(c)}
+          ${BDD && (c.bdd || []).length ? `<div class="bdd-links">${T('bddCard')} ${c.bdd.map(id => `<a href="${esc(BDD)}#${encodeURIComponent(id)}" target="_blank" rel="noopener">${esc(id)} ↗</a>`).join('')}</div>` : ''}
           ${c.link ? `<div class="card-actions"><a class="btn ghost" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(L(c.linkRotulo) || 'Link')} ↗</a></div>` : ''}
         </div>`;
     }
     /* O que o QA viu nesta plataforma, da rodada mais recente até a escolhida. */
+    // Comparação de um card (qa[].comparacao, gerada por ferramentas/comparar.py): notas,
+    // Lado a lado / Cortina / Piscar / Diff com a nota de cada região; tocar numa imagem amplia
+    function cmpHTML(k, pasta) {
+      const cls = v => v >= 95 ? 'cmp-ok' : (v >= 85 ? 'cmp-warn' : 'cmp-bad');
+      const A = esc(pasta + k.a), B = esc(pasta + k.b), D = esc(pasta + k.diff);
+      const cells = k.cells || [];
+      const worst = cells.map((s, i) => [s, i]).sort((x, y) => x[0] - y[0]).slice(0, 3).map(x => x[1]);
+      const grid = cells.map((s, i) => `<div class="cmp-cell ${s < 85 ? 'lo' : (s < 95 ? 'mid' : 'hi')} ${worst.includes(i) ? 'worst' : ''}"><span>${Math.round(s)}%</span></div>`).join('');
+      const ab = { a: esc(k.la), b: esc(k.lb) };
+      return `<div class="cmpbox">
+        <div class="cmp-head"><b>${T('cvTitle')}</b> ${T('cvRaw')} <span class="cmp-b ${cls(k.raw)}">${k.raw.toFixed(1)}%</span> ${T('cvAligned')} <span class="cmp-b ${cls(k.aligned)}">${k.aligned.toFixed(1)}%</span> ${T('cvShift')} <span class="cmp-b cmp-n">${k.dy > 0 ? '+' : ''}${k.dy}px</span><button class="cmp-zoom">${T('cvZoom')}</button></div>
+        <div class="cmp-tabs"><button class="on" data-cmp="side">${T('cvSide')}</button><button data-cmp="curtain">${T('cvCurtain')}</button><button data-cmp="blink">${T('cvBlink')}</button><button data-cmp="diff">${T('cvDiff')}</button></div>
+        <div class="cmp-v cmp-side on"><figure><img src="${A}" loading="lazy"><figcaption>${esc(k.la)}</figcaption></figure><figure><img src="${B}" loading="lazy"><figcaption>${esc(k.lb)}</figcaption></figure></div>
+        <div class="cmp-v cmp-curtain"><div class="cmp-stage"><img src="${A}"><div class="cmp-top"><img src="${B}"></div><div class="cmp-bar"></div></div><input type="range" min="0" max="100" value="50" class="cmp-slider"><p class="cmp-hint">${T('cvCurtainHint', ab)}</p></div>
+        <div class="cmp-v cmp-blink"><div class="cmp-stage"><img src="${A}"><img class="cmp-b2" src="${B}"></div><p class="cmp-hint">${T('cvBlinkHint')}</p></div>
+        <div class="cmp-v cmp-diff"><div class="cmp-stage"><img src="${D}"><div class="cmp-grid" style="grid-template-columns:repeat(${k.cols || 4},1fr)">${grid}</div></div><p class="cmp-hint">${T('cvDiffHint', ab)}</p></div>
+      </div>`;
+    }
     function qaHTML(c, plat, round) {
       const ents = (c.qa || []).filter(q => (!q.plataforma || q.plataforma === plat) && roundIdx(q.rodada) <= roundIdx(round))
         .sort((a, b) => roundIdx(b.rodada) - roundIdx(a.rodada));
@@ -1482,7 +1548,8 @@
           <div class="todo-title">${T('qaSaw')} · ${esc(q.plataforma ? platLabel(q.plataforma) : '')} ${esc(roundLabel(q.rodada))}</div>
           <div class="seen">${L(q.visto)}</div>
           ${q.auditor ? `<div class="seen"><b>${T(q.auditor.veredito === 'pass' ? 'audPass' : 'audFail')}</b>${q.auditor.visto ? ' · ' + L(q.auditor.visto) : ''}</div>` : ''}
-          ${(q.prints || []).length ? `<div class="shots" title="${esc(T('shotsHint'))}">${q.prints.map(f => `<a href="${esc(pasta + f)}" target="_blank" rel="noopener"><img src="${esc(pasta + f)}" alt="${esc(f)}" loading="lazy"></a>`).join('')}</div>` : ''}`).join('');
+          ${(q.prints || []).length ? `<div class="shots" title="${esc(T('shotsHint'))}">${q.prints.map(f => `<a href="${esc(pasta + f)}" target="_blank" rel="noopener"><img src="${esc(pasta + f)}" alt="${esc(f)}" loading="lazy"></a>`).join('')}</div>` : ''}
+          ${q.comparacao ? cmpHTML(q.comparacao, pasta) : ''}`).join('');
       return { html, sev: ents[0].gravidade || '' };
     }
     const ICON = { pass: '✅', fail: '❌', skip: '🚫', wait: '⏳', auditFail: '🔎❌' };
@@ -1812,6 +1879,28 @@
     }
     boot();
     detectarServidor();
+
+    /* Comparação: abas, cortina e ampliar. O ampliar copia a caixa para uma camada no body,
+       fora do card, porque o card se redesenha a cada clique; Esc fecha. */
+    const cmpClose = () => { const o = document.getElementById('cmp-overlay'); if (o) o.remove(); document.body.style.overflow = ''; };
+    const cmpOpen = box => {
+      cmpClose();
+      const full = box.cloneNode(true); full.classList.add('cmp-full'); full.id = 'cmp-overlay';
+      full.querySelector('.cmp-zoom').textContent = T('cvClose');
+      full.querySelectorAll('img').forEach(i => i.removeAttribute('loading'));
+      document.body.appendChild(full); document.body.style.overflow = 'hidden';
+    };
+    document.addEventListener('click', e => {
+      const box = e.target.closest('.cmpbox'); if (!box) return;
+      e.stopPropagation();
+      const isFull = box.id === 'cmp-overlay';
+      if (e.target.closest('.cmp-zoom')) { isFull ? cmpClose() : cmpOpen(box); return; }
+      if (!isFull && e.target.closest('img')) { cmpOpen(box); return; }
+      const t = e.target.closest('.cmp-tabs button');
+      if (t) { box.querySelectorAll('.cmp-tabs button').forEach(x => x.classList.toggle('on', x === t)); box.querySelectorAll('.cmp-v').forEach(v => v.classList.toggle('on', v.classList.contains('cmp-' + t.dataset.cmp))); }
+    }, true);
+    document.addEventListener('input', e => { if (!e.target.classList.contains('cmp-slider')) return; e.stopPropagation(); e.target.closest('.cmpbox').style.setProperty('--x', e.target.value + '%'); }, true);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cmpClose(); });
   </script>
 </body>
 </html>

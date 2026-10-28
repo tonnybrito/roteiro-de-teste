@@ -1,0 +1,71 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Shared hunter onboarding (solo, 1 player), identical across all themes:
+#   start hunt -> safety -> 1 player + name -> (team name if shown) ->
+#   "already have" assets -> review -> start hunt.
+# Theme-specific bits (tutorial arrow, captures, end-game) live elsewhere.
+---
+- tapOn:
+    id: "startTheHuntButton"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow:
+    when:
+        visible: "OK"
+    commands:
+        - tapOn: "OK"
+- takeScreenshot: "screenshots/flow-${THEME}/02-safety"
+- tapOn:
+    id: "safetyWarningCheckbox"
+- tapOn:
+    id: "safetyWarningBeginButton"
+- waitForAnimationToEnd:
+    timeout: 1200
+- takeScreenshot: "screenshots/flow-${THEME}/03-player-setup"
+- tapOn:
+    id: "playerCountButton_1"
+- tapOn:
+    id: "playerNameTextField_1"
+    index: 1
+- inputText: "Shanti"
+- tapOn:
+    id: "continueButton"
+- waitForAnimationToEnd:
+    timeout: 1800
+# Team name only appears for multi-player teams — skipped for solo.
+- runFlow:
+    when:
+        visible:
+            id: "hunterTeamNameTextField"
+    commands:
+        - tapOn:
+            id: "hunterTeamNameTextField"
+            index: 0
+        - inputText: "BritoPets"
+        - tapOn:
+            id: "hunterTeamNameContinueButton"
+        - waitForAnimationToEnd:
+            timeout: 1800
+# Assets: "I already have them"
+- takeScreenshot: "screenshots/flow-${THEME}/04-assets"
+- tapOn:
+    id: "assetsIntroAlreadyHaveButton"
+- tapOn:
+    id: "alertDialogSecondaryButton"
+- tapOn:
+    id: "assetsIntroAlreadyHaveButton"
+- tapOn:
+    id: "alertDialogPrimaryButton"
+# Review screen
+- waitForAnimationToEnd:
+    timeout: 1200
+- takeScreenshot: "screenshots/flow-${THEME}/05-review"
+- tapOn:
+    id: "hunterReviewHowToPlayButton"
+- tapOn:
+    id: "xmark.circle.fill"
+- tapOn:
+    id: "hunterReviewEditButton"
+- tapOn:
+    id: "continueButton"
+- tapOn:
+    id: "hunterReviewStartHuntButton"

@@ -1,0 +1,129 @@
+appId: ${APP}
+# Part 4: results -> QUIT -> credits -> the 4 product links -> choose another trail -> carousel
+---
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: "shots/${DEV}/${THEME}-16-hunt-completed"
+- scroll
+- takeScreenshot: "shots/${DEV}/${THEME}-16b-hunt-completed-scrolled"
+- runFlow:
+    when:
+        visible:
+            id: "quitButton"
+    commands:
+        - tapOn:
+            id: "quitButton"
+- runFlow:
+    when:
+        visible: "^(QUIT|Quit)$"
+    commands:
+        - tapOn: "^(QUIT|Quit)$"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: "shots/${DEV}/${THEME}-17-credits"
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_teeTimeTrainer"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_teeTimeTrainer"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad1-tee-time-trainer"
+- runFlow:
+    when:
+        visible: "Close tab|Fechar guia"
+    commands:
+        - tapOn: "Close tab|Fechar guia"
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - pressKey: back
+- waitForAnimationToEnd:
+    timeout: 1500
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - launchApp:
+            stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_prayerStones"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_prayerStones"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad2-prayer-stones"
+- runFlow:
+    when:
+        visible: "Close tab|Fechar guia"
+    commands:
+        - tapOn: "Close tab|Fechar guia"
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - pressKey: back
+- waitForAnimationToEnd:
+    timeout: 1500
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - launchApp:
+            stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- scrollUntilVisible:
+    element:
+        id: "creditsProductLink_studioWebsite"
+    direction: DOWN
+- tapOn:
+    id: "creditsProductLink_studioWebsite"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-18-ad3-studio-site"
+- runFlow:
+    when:
+        visible: "Close tab|Fechar guia"
+    commands:
+        - tapOn: "Close tab|Fechar guia"
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - pressKey: back
+- waitForAnimationToEnd:
+    timeout: 1500
+- runFlow:
+    when:
+        notVisible:
+            id: "creditsTitle"
+    commands:
+        - launchApp:
+            stopApp: false
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-17b-credits-after-ads"
+- scrollUntilVisible:
+    element:
+        id: "creditsChooseAnotherSeekButton"
+    direction: DOWN
+- tapOn:
+    id: "creditsChooseAnotherSeekButton"
+- waitForAnimationToEnd:
+    timeout: 4000
+- extendedWaitUntil:
+    visible: "Choose your adventure"
+    timeout: 20000
+- takeScreenshot: "shots/${DEV}/${THEME}-19-back-to-carousel"

@@ -1,0 +1,315 @@
+appId: ${APP}
+# Part 2: lore/tutorial pages, then the nine captures (frames for every capture)
+---
+- evalScript: ${output.n = 0}
+- waitForAnimationToEnd:
+    timeout: 2000
+- repeat:
+    while:
+        notVisible: ${ARROW}
+    commands:
+        - evalScript: ${output.n = output.n + 1}
+        - takeScreenshot: "shots/${DEV}/${THEME}-12-tutorial-${output.n}"
+        - runFlow:
+            when:
+                visible:
+                    id: "chevron.right"
+            commands:
+                - tapOn:
+                    id: "chevron.right"
+        - runFlow:
+            when:
+                visible: "Next"
+            commands:
+                - tapOn: "Next"
+        - waitForAnimationToEnd:
+            timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-13-hub-ready"
+- tapOn:
+    id: "trapSlot_0"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap1-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap1-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap1-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap1-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap1-e-hub"
+- tapOn:
+    id: "trapSlot_1"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap2-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap2-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap2-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap2-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap2-e-hub"
+- tapOn:
+    id: "trapSlot_2"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap3-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap3-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap3-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap3-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap3-e-hub"
+- tapOn:
+    id: "trapSlot_3"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap4-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap4-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap4-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap4-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap4-e-hub"
+- tapOn:
+    id: "trapSlot_4"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap5-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap5-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap5-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap5-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap5-e-hub"
+- tapOn:
+    id: "trapSlot_5"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap6-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap6-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap6-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap6-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap6-e-hub"
+- tapOn:
+    id: "trapSlot_6"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap7-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap7-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap7-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap7-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap7-e-hub"
+- tapOn:
+    id: "trapSlot_7"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap8-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap8-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap8-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap8-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap8-e-hub"
+- tapOn:
+    id: "trapSlot_8"
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*|^OK$"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*|^OK$"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap9-a-scanner"
+- tapOn:
+    id: "debugCaptureButton"
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap9-b-found"
+- longPressOn: ${TRAP}
+- extendedWaitUntil:
+    visible: "CONTINUE"
+    timeout: 150000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap9-c-card"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- runFlow:
+    when:
+        visible: "CONTINUE"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-14-cap9-d-extra"
+        - tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-14-cap9-e-hub"

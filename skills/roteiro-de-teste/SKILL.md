@@ -9,6 +9,10 @@ The owner's own tool, also shared with a partner. It turns "what this product do
 
 **One file per product, growing round by round.** A product with 60 sessions is tested from session 1. Each run of this skill adds a **round** (rodada) with the new cards and sends back for retest whatever failed before. Nothing that was saved is ever lost.
 
+## Part of the iPhone ⇄ Android conversion package
+
+This skill is the mandatory base of the conversion package in `~/Ferramentas/conversao-ios-android/` (guide: `GUIA.html`, installer: `instalar.sh`, which always installs this skill first). The five conversion skills build on its checklists and its `comparar.py`, in either direction (iPhone → Android or Android → iPhone): `/conversao-preparar` (direction, reference app, round 1 of the checklist), `/conversao-fidelidade` (one screen at a time, before × after comparisons), `/conversao-paridade` (robot runs on both phones, findings), `/conversao-android` and `/conversao-ios` (what only the target platform has: font size, short screens, keyboard, back, store build). It also works alone, for any product. When this skill changes, copy it to the package (`cp -Rp ~/.claude/skills/roteiro-de-teste ~/Ferramentas/conversao-ios-android/skills/`) so both stay the same.
+
 ## The pieces
 
 - `pacote/` is the saving tool (master copy): `servidor.py`, `abrir-html-salvavel.command` and `LEIA-ME.md`. Read `pacote/LEIA-ME.md`, because it is the saving contract. The tool **runs** from `~/Ferramentas/html-salvavel/`, an installed copy that is never edited by hand; `backups/` lives there.
@@ -21,9 +25,35 @@ The owner's own tool, also shared with a partner. It turns "what this product do
   - `molde <file.html>` swaps the page for the current model, keeping the file's config and marks byte for byte (backup first). Use it, after asking, when a checklist was built with an older model.
   - `ler <file.html>` prints the config and the saved marks.
   
-  It also rejects a config that repeats a card id, or whose cards point to a tab, platform, round or variant that does not exist.
+  It also rejects a config that repeats a card id, or whose cards point to a tab, platform, round or variant that does not exist, and a `qa[].comparacao` missing any of its fields.
+- `ferramentas/comparar.py` builds a card's **comparison** from two screenshots of the same screen (iPhone × Android, Figma × Android, before × after): `comparar.py <A> <B> <pastaPrints folder> <name> --la "iOS · iPhone 17" --lb "Android · Pixel" [--corte-a ios|android|figma|nenhum] [--corte-b …]`. It writes `<name>-A.jpg`, `<name>-B.jpg` (B aligned vertically) and `<name>-diff.jpg` into the prints folder and prints the JSON to put in that QA entry's `comparacao`. Needs ImageMagick.
 - `pacote/app/` holds the **"Abrir HTML Salvável" app** for the Dock: its AppleScript, its icon (`AppIcon.icns`, drawn from `icone.svg`) and `instalar-app.sh`, which builds it into `~/Applications`. The app lists the last projects opened (up to 8, in `~/Ferramentas/html-salvavel/ultimos-projetos.txt`) plus "Outra pasta…", checks the folder has a saveable HTML, and starts the server there through `pacote/abrir-pasta.sh`. One app serves every project, so the per-folder `.command` becomes optional.
 - `pacote/agentes/` holds copies of the two independent agents, `independent-qa.md` and `independent-auditor.md`, so a new machine gets them too (step 1).
+
+## The project's BDD (when there is one)
+
+A project may carry a BDD (made by hand or by `/bdd-antes`): a `BDD/` folder at the project root with an HTML page `BDD/bdd-<project>.html` whose scenarios are cards with stable ids (`<div class="cen" id="L-03">`), plus Gherkin `.feature` files tagged with the same ids. The BDD says **what** the product must do; this checklist records **whether a person checked it**. The checklist links to it, never copies it:
+- **Header link.** The config's `"bdd": {"arquivo": "BDD/bdd-<project>.html"}` (path relative to the checklist file) puts "📘 Ver o BDD deste projeto ↗" under the subtitle.
+- **Card links.** A card's `"bdd": ["L-03", "L-04"]` lists the scenarios it covers; the card shows "Cenários no BDD: L-03 ↗ L-04 ↗", each opening the BDD page on that scenario, in a new tab (so unsaved marks are never lost).
+- `roteiro.py novo|config` refuses a config whose BDD file does not exist next to the checklist, a card that cites a scenario id missing from it, or a card with `bdd` while the config has no `bdd.arquivo`. A checklist without BDD looks exactly as before.
+
+## 0. The skill family (first, every time)
+
+This skill belongs to a **family** kept in `~/Ferramentas/conversao-ios-android/` (guide in `GUIA.html` there):
+- `roteiro-de-teste`: the saveable HTML checklists. The base of the conversion skills.
+- `bdd-antes`: BDD before code (Gherkin features, steps, runner and the linked BDD page). It works **with or without** `roteiro-de-teste`; when both are in a project, the checklist links to the BDD.
+- `conversao-preparar`, `conversao-fidelidade` and `conversao-paridade`: the conversion between iPhone and Android, **both ways** (iPhone → Android or Android → iPhone; `conversao-preparar` records which app is the reference). `conversao-android` and `conversao-ios`: what only the target platform has. Each works alone; all need `roteiro-de-teste`.
+
+1. Check each of the seven: present in `~/.claude/skills/`, and the same as the package copy (`diff -rq ~/.claude/skills/<name> ~/Ferramentas/conversao-ios-android/skills/<name>`). A skill missing from the package's `skills/` is "ainda não criada".
+2. **Always open the choice window**, even when everything is installed. Before it, say that `/roteiro-de-teste` is the base: it is installed first whenever a conversion skill is chosen, and cannot be left out then. Never install without the answer.
+   - **On macOS: a native popup.** Run `zsh ~/Ferramentas/conversao-ios-android/escolher-skills.sh` with the Bash timeout at 600000 (the person may take a while). It shows the seven skills, each with its state and what it does, and prints the chosen names separated by commas, or `CANCELADO`, or nothing when none was marked. Tell the person the popup is open on the screen.
+   - **Elsewhere** (the script prints `SEM-POPUP` and exits 3), use the Claude window instead: **one** AskUserQuestion holding three questions, all `multiSelect: true` (a question holds at most four options): header "BDD" with `/bdd-antes` plus "Nenhuma"; header "Conversão" with `/conversao-preparar`, `/conversao-fidelidade`, `/conversao-paridade` plus "Nenhuma"; header "Plataforma" with `/conversao-android`, `/conversao-ios` plus "Nenhuma". Each option's description says what the skill does and its state.
+   - States: **instalada**, **falta**, **desatualizada** or **ainda não criada**. A chosen skill that is "ainda não criada" cannot be installed: say so.
+3. Install only what was chosen and is missing or outdated: `zsh ~/Ferramentas/conversao-ios-android/instalar.sh --skills <comma-separated names>`. It puts `roteiro-de-teste` first when a conversion skill is chosen, installs `bdd-antes` alone when only it is chosen, skips what is up to date, refuses a skill the package does not have, and backs up anything it replaces. A chosen skill that is installed and up to date needs nothing: say so.
+4. Then, when this skill uses checklists, run `roteiro-de-teste` step 1 ("Prepare the saving"): the saving tool, the Dock app "Abrir HTML Salvável" and the QA/Auditor agents, each asked first.
+5. New skills and agents load only in a new session: if something was installed, ask the person to restart Claude Code, and stop here.
+
+Talk to the person in their language, by the name saved in `~/Ferramentas/html-salvavel/nome.txt` (the `roteiro-de-teste` step 1 asks for it; until then, their `whoami` name). If their CLAUDE.md says how to work with them (tutor style, one thing at a time, one question per message, asking before every action), follow it.
 
 ## 1. Prepare the saving (ask first)
 
@@ -44,6 +74,8 @@ The owner's own tool, also shared with a partner. It turns "what this product do
 Look for an existing checklist in the project: `grep -l 'id="roteiro-config"' *.html`.
 - **None found:** this is the first run, and steps 3–7 build the checklist. Name it `teste<Product>.html` (e.g. `testeTrilhaDosBichos.html`): one per product, never one per platform.
 - **Found:** this is a new round. Run `roteiro.py ler` on it first. Its saved marks say what passed, failed or was skipped on each platform. Steps 3–7 then **add to** that config.
+
+Then look for a BDD: `ls BDD/bdd-*.html`. If there is one, read its scenario ids and titles (`grep -o 'class="cen" id="[^"]*"' BDD/bdd-*.html`, and the `<h4>` after each) and use them in steps 3–4: the BDD is the best map of what the product does. Tell the person the checklist will link to it. An existing checklist built with an older model has no BDD links on the page: offer `roteiro.py molde` (marks stay byte for byte) and then `config` with the links.
 
 ## 3. Discover the product
 
@@ -68,7 +100,8 @@ One card is one thing a person can check by hand, with a clear pass condition.
   - `aba`, `tag`, `corTag` and `titulo`;
   - `passos`: short, concrete steps;
   - `passa`: what counts as passing;
-  - optional: `link`/`linkRotulo`, `aviso` and `chips`.
+  - optional: `link`/`linkRotulo`, `aviso` and `chips`;
+  - `bdd`: when the project has a BDD, the scenario ids this card covers (`["L-03"]`). Every card that matches a scenario gets it; a card with no matching scenario is fine, and the plan (step 6) lists it, because it may be a scenario missing from the BDD.
 - **Language: always both.** Every text the person reads (titles, steps, pass conditions, tags, notes, tabs, rounds, variants, the header and footer, what the QA saw) is written as `{"pt": "...", "en": "..."}`, never as a plain string. Ask once which language opens first and set `idiomaPadrao` (`"pt"` or `"en"`); the page's PT/EN button switches everything. `roteiro.py` refuses a config with any single-language text and lists what is missing. When updating an older checklist written in one language, translate all of it in the same update.
 
 ## 5. The independent QA, per platform, then the Auditor (ask first)
@@ -76,6 +109,7 @@ One card is one thing a person can check by hand, with a clear pass condition.
 When the product can be run here (emulator, simulator or browser), offer to send the `independent-qa` agent to walk it, **one platform at a time**, with the role and scope the person chooses.
 - For each card, it reports: pass, fail or could not test; what it saw; the severity (`blocker`, `major`, `minor` or `cosmetic`); and the names of its screenshots. The screenshots are saved compressed under `images/<checklist name>/`, and that folder goes in `pastaPrints`.
 - What it saw goes in the card's `qa` list, for example `{"rodada": "R2", "plataforma": "android", "gravidade": "major", "visto": "...", "prints": ["a.jpg"]}`. A finding that no card covers becomes a new card.
+- **Comparison (any card, any round).** When a card is about how a screen looks against a reference (the iPhone, Figma, the previous build), run `comparar.py` on the two screenshots and put its JSON in that entry as `"comparacao"`. The card then shows a **Comparação** box under what the QA saw: the raw score and the score after aligning (green ≥ 95%, amber ≥ 85%, red below), the vertical shift, and four tabs, **Lado a lado / Cortina / Piscar / Diff** (Diff marks each region's score and boxes the 3 worst); tapping an image or "⤢ Ampliar" opens it full screen, Esc closes. Video or animated screens score low even when right: say so in `visto`. One comparison per QA entry; a card with several screens gets one entry per screen.
 ### The approval loop (a card is green only when both approve)
 
 1. **QA tests.** A card the QA fails or could not test **does not go to the Auditor**.
@@ -108,13 +142,14 @@ Send one message, in the person's language, with:
 - how many cards are new, and how many come back for retest, each with its reason: failed or untested before, rejected by the Auditor, changed by the dev, or linked to a changed card;
 - the tabs, with how many cards each;
 - one line per new card;
+- with a BDD: how many cards link to scenarios, and which scenarios no card covers and which cards no scenario covers;
 - where the list came from.
 
 **The count comes from the analysis, never from a target.** Wait for approval.
 
 ## 7. Build or update
 
-- Write the config JSON in the scratchpad with these keys: `chave` (unique per checklist, it keeps the browser's memory apart), `idiomaPadrao`, `selo`, `titulo`, `tituloAba`, `subtitulo`, `rodape`, `exemplosAparelho`, `plataformas`, `rodadas`, `variacoes`, `abas`, `cards` and `pastaPrints`. Copy the shapes from the example config inside `roteiro-modelo.html`.
+- Write the config JSON in the scratchpad with these keys: `chave` (unique per checklist, it keeps the browser's memory apart), `idiomaPadrao`, `selo`, `titulo`, `tituloAba`, `subtitulo`, `rodape`, `exemplosAparelho`, `plataformas`, `rodadas`, `variacoes`, `abas`, `cards` and `pastaPrints`, plus `bdd` when the project has one. Copy the shapes from the example config inside `roteiro-modelo.html`.
 - Add the new round at the end of `rodadas`, as `{"id": "R2", "rotulo": {...}, "curto": "R2", "retestar": [...]}`. Add `"regressao": true` when everything must be retested, for example before a release or after a big change.
 - The page decides by itself what to test in each round. A card shows up when it is new in that round, when the round is a regression round, when it or a card linked to it is in `retestar`, or when its last result on that platform was not a pass. Earlier passes show faded, as "carried". Nothing needs computing by hand.
 - Run `python3 ferramentas/roteiro.py novo|config <file> <config.json>`. Never edit the HTML by hand, and never touch `dados-salvos`.
@@ -124,6 +159,8 @@ Send one message, in the person's language, with:
 - Contract: `servidor.html_salvavel(Path(file))` must print `True`. Import it from `pacote/` with `sys.dont_write_bytecode=True`.
 - `roteiro.py ler` must show the same number of saved marks as before the update.
 - If the model itself changed: extract the last `<script>` and run `node --check` on it.
+- With a BDD: open the checklist in headless Chrome and check the header link and one card link open the BDD page on the right scenario.
+- If a card has a `comparacao`: open it in headless Chrome, check the box shows the scores and that each of the four tabs and the full-screen view draw the images (paths are relative to `pastaPrints`).
 - When possible, open a **copy** in headless Chrome through `servidor.py`. Switch the platform, round, variant and language; mark a card, save, reload, and see it come back.
 
 ## 9. Hand it over

@@ -1,0 +1,22 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Easter end-game: dialogs -> awaken flame -> capture boss -> FINISH GAME.
+# Storyboard frames keyed by ${THEME} into screenshots/flow-<THEME>/.
+---
+- takeScreenshot: "screenshots/flow-${THEME}/end-1-story"
+- repeat:
+    while:
+        notVisible: "flame-easter"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "screenshots/flow-${THEME}/end-2-flame"
+- longPressOn: "flame-easter"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: "screenshots/flow-${THEME}/end-3-boss"
+- longPressOn: "PumpkinBoss-Captured-easter"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "screenshots/flow-${THEME}/end-4-finish"
+- tapOn: "FINISH GAME"

@@ -1,0 +1,35 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Halloween end-game: dialogs -> Guia -> close -> trap boss -> FINISH GAME.
+# Storyboard frames keyed by ${THEME} into screenshots/flow-<THEME>/.
+---
+- repeat:
+    while:
+        notVisible: "GUIA"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "screenshots/flow-${THEME}/end-1-guide"
+- tapOn: "Close"
+- repeat:
+    while:
+        notVisible: "creatures-trap-halloween"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "screenshots/flow-${THEME}/end-2-boss"
+- longPressOn: "creatures-trap-halloween"
+- tapOn: "CONTINUE"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "screenshots/flow-${THEME}/end-3-captured"
+- repeat:
+    while:
+        notVisible: "FINISH GAME"
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "screenshots/flow-${THEME}/end-4-finish"
+- tapOn: "FINISH GAME"

@@ -43,6 +43,13 @@ The skills talk to you in your language; their own texts and the generated pages
 
 3. Restart Claude Code. New skills and agents only show up in a new session.
 
+### After installing: what you get
+
+- **The guide opens by itself in the browser.** It is this folder's `GUIA.html`, on the tab of the skill you just installed. It shows which skills are installed on this Mac: installed ones have live links, connected to each other; the others are faded, marked "not installed". It works the same whether you install only `/test-checklist`, only `/bdd-first` or the conversion skills. Click **EN** at the top for English.
+- **The editable-HTML button** (with `/test-checklist`). The installer asks whether to put the **"Abrir HTML Salvável"** app ("Open Saveable HTML") in the **Dock** and on the **Desktop**. It is what opens the test checklists **so they can save**: click it, pick the project folder, and the browser opens the checklist with "💾 Saving to file" at the top (a Terminal window stays open while you test). The guide highlights this button, with its icon and the steps.
+- **On the Desktop** you get two shortcuts: **"Abrir HTML Salvável"** and **"Skills guide"**, to reopen the guide whenever you want.
+- To create the shortcuts later: `zsh ~/Ferramentas/conversao-ios-android/instalar-en.sh --skills test-checklist --atalhos yes`.
+
 ### The choice window (step 0 of every skill)
 
 Every skill in the family starts with **step 0**: it shows the seven skills, each with its state (*installed*, *missing*, *outdated*) and what it does, and asks which ones you want in that project.

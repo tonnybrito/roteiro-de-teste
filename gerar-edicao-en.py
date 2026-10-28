@@ -80,6 +80,16 @@ ESCOLHER_TEXTOS = [
      "# On macOS it opens a native popup with the seven skills and the state of each, and prints\n# the chosen ones separated by commas (e.g. \"bdd-first,conversion-android\"), or CANCELADO.\n# Off macOS it prints SEM-POPUP and exits 3: the skill then asks through Claude's own window."),
 ]
 INSTALAR_TEXTOS = [
+    ("# Instala as skills da família (test-checklist, bdd-first e as de conversão iPhone ⇄ Android, nos dois sentidos) em ~/.claude/skills.\n# A /test-checklist é a base das de conversão: entra SEMPRE primeiro quando uma delas é escolhida.\n# A /bdd-first funciona sozinha: escolhida sozinha, entra sem a /test-checklist.",
+     "# Installs the family's skills (test-checklist, bdd-first and the iPhone ⇄ Android conversion skills, either way) into ~/.claude/skills. English edition.\n# /test-checklist is the base of the conversion skills: it ALWAYS comes first when one of them is chosen.\n# /bdd-first works alone: chosen alone, it is installed without /test-checklist."),
+    ("menu: 1 só a test-checklist · 2 escolher · 3 todas", "menu: 1 only test-checklist · 2 choose · 3 all"),
+    ("sem menu, instala todas as que o pacote tem", "no menu, installs every skill the package has"),
+    ("sem menu, só as citadas (+ test-checklist se houver uma de conversão)", "no menu, only those named (+ test-checklist if a conversion skill is named)"),
+    ("#   --atalhos sim|nao                                com a test-checklist: o botão do HTML editável no Dock e na Mesa\n#                                                    (sem a opção, pergunta; sem terminal para perguntar, não cria)",
+     "#   --atalhos yes|no                                 with test-checklist: the editable-HTML button in the Dock and on the Desktop\n#                                                    (without it, asks; with no terminal to ask, does not create them)"),
+    ("# Antes de trocar uma skill que já existe e é diferente, guarda uma cópia em ~/Ferramentas/html-salvavel/backups/.\n# No fim, abre o GUIA.html no navegador, na aba da skill instalada, mostrando só o que está instalado.",
+     "# Before replacing an existing skill that differs, keeps a copy in ~/Ferramentas/html-salvavel/backups/.\n# At the end, opens GUIA.html in the browser, on the installed skill's tab, showing what is installed."),
+    ('echo "uso: zsh instalar-en.sh [--todas | --skills a,b] [--atalhos sim|nao]"', 'echo "usage: zsh instalar-en.sh [--todas | --skills a,b] [--atalhos yes|no]"'),
     ('echo "Família de skills: /test-checklist, /bdd-first e as de conversão iPhone ⇄ Android"', 'echo "Skill family: /test-checklist, /bdd-first and the iPhone ⇄ Android conversion skills"'),
     ('echo "A /test-checklist é a base das de conversão e entra primeiro quando uma delas é escolhida."', 'echo "/test-checklist is the base of the conversion skills and comes first when one of them is chosen."'),
     ('echo "  1) só a /test-checklist"', 'echo "  1) only /test-checklist"'),
@@ -89,24 +99,27 @@ INSTALAR_TEXTOS = [
     ('read "r?Instalar /$s? (s/n) "; [[ "$r" == [sS]* ]]', 'read "r?Install /$s? (y/n) "; [[ "$r" == [yY]* ]]'),
     ('echo "  /$s: ainda não criada"', 'echo "  /$s: not created yet"'),
     ('echo "Opção inválida: nada foi instalado."', 'echo "Invalid option: nothing was installed."'),
-    ('echo "uso: zsh instalar-en.sh [--todas | --skills a,b]"', 'echo "usage: zsh instalar-en.sh [--todas | --skills a,b]"'),
     ('echo "Skill desconhecida ou ainda não criada: $s (nada foi instalado)"', 'echo "Unknown skill or not created yet: $s (nothing was installed)"'),
+    ("# A /test-checklist entra primeiro quando há alguma de conversão escolhida.", "# /test-checklist comes first when any conversion skill is chosen."),
     ('echo "Nada escolhido: nada foi instalado."', 'echo "Nothing chosen: nothing was installed."'),
     ('echo "= /$nome já está atualizada"', 'echo "= /$nome is already up to date"'),
     ('echo "  cópia de segurança da versão antiga: $BK/$nome"', 'echo "  backup of the old version: $BK/$nome"'),
     ('echo "+ /$nome instalada"', 'echo "+ /$nome installed"'),
-    ('echo "Pronto. Reinicie o Claude Code para as skills novas aparecerem."', 'echo "Done. Restart Claude Code for the new skills to show up."'),
-    ("# Instala as skills da família (test-checklist, bdd-first e as de conversão iPhone ⇄ Android, nos dois sentidos) em ~/.claude/skills.\n# A /test-checklist é a base das de conversão: entra SEMPRE primeiro quando uma delas é escolhida.",
-     "# Installs the family's skills (test-checklist, bdd-first and the iPhone ⇄ Android conversion skills, either way) into ~/.claude/skills.\n# /test-checklist is the base of the conversion skills: it ALWAYS comes first when one of them is chosen. English edition."),
-    ("menu: 1 só a test-checklist · 2 escolher · 3 todas", "menu: 1 only test-checklist · 2 choose · 3 all"),
-    ("sem menu, só as citadas (+ test-checklist se houver uma de conversão)", "no menu, only those named (+ test-checklist if a conversion skill is named)"),
-    ("# Antes de trocar uma skill que já existe e é diferente, guarda uma cópia em ~/Ferramentas/html-salvavel/backups/.", "# Before replacing an existing skill that differs, keeps a copy in ~/Ferramentas/html-salvavel/backups/."),
-    ("# A /test-checklist entra primeiro quando há alguma de conversão escolhida.", "# /test-checklist comes first when any conversion skill is chosen."),
-    ("# O que a /test-checklist precisa fora das skills: só avisa; a própria skill pergunta antes de instalar", "# What /test-checklist needs outside the skills: only a warning; the skill itself asks before installing"),
-    ('echo "! Falta a ferramenta que salva no HTML: peça ao Claude \\"/test-checklist\\" (passo 1) ou copie skills/test-checklist/pacote para ~/Ferramentas/html-salvavel"',
-     'echo "! Missing the tool that saves into the HTML: ask Claude for \\"/test-checklist\\" (step 1) or copy skills-en/test-checklist/pacote to ~/Ferramentas/html-salvavel"'),
-    ('echo "! Falta o app da Dock: zsh ~/Ferramentas/html-salvavel/app/instalar-app.sh"', 'echo "! Missing the Dock app: zsh ~/Ferramentas/html-salvavel/app/instalar-app.sh"'),
+    ('# O botão do HTML editável: a ferramenta que salva, o app "Abrir HTML Salvável" e o atalho dele no Dock e na Mesa.', '# The editable-HTML button: the saving tool, the "Abrir HTML Salvável" app and its shortcut in the Dock and on the Desktop.'),
+    ('echo "A /test-checklist abre os HTMLs editáveis por um botão: o app \\"Abrir HTML Salvável\\"."', 'echo "/test-checklist opens the editable HTML pages through a button: the \\"Abrir HTML Salvável\\" app (Open Saveable HTML)."'),
+    ('read "r?Colocar esse botão no Dock e na Mesa (Desktop)? (s/n) "\n      [[ "$r" == [sS]* ]] && ATALHOS=sim || ATALHOS=nao', 'read "r?Put that button in the Dock and on the Desktop? (y/n) "\n      [[ "$r" == [yY]* ]] && ATALHOS=sim || ATALHOS=nao'),
+    ('echo "+ app \\"Abrir HTML Salvável\\" em ~/Applications"', 'echo "+ \\"Abrir HTML Salvável\\" app in ~/Applications"'),
+    ('echo "+ botão no Dock"', 'echo "+ button in the Dock"'),
+    ('echo "= o botão já está no Dock"', 'echo "= the button is already in the Dock"'),
+    ('"$HOME/Desktop/Guia das skills.html"', '"$HOME/Desktop/Skills guide.html"'),
+    ('echo "+ na Mesa: \\"Abrir HTML Salvável\\" e \\"Guia das skills\\""', 'echo "+ on the Desktop: \\"Abrir HTML Salvável\\" and \\"Skills guide\\""'),
+    ("# O que existe de fato (de uma instalação de agora ou de antes), para o guia mostrar.", "# What really exists (from this install or an earlier one), for the guide to show."),
+    ("# O guia mostra o que está instalado: o instalador escreve instaladas.js ao lado do GUIA.html.", "# The guide shows what is installed: the installer writes instaladas.js next to GUIA.html."),
+    ('// Escrito pelo instalador em $(date "+%Y-%m-%d %H:%M"). Não editar: rode o instalador de novo.', '// Written by the installer on $(date "+%Y-%m-%d %H:%M"). Do not edit: run the installer again.'),
     ('echo "! Falta o agente $a:', 'echo "! Missing the agent $a:'),
+    ('echo "Pronto. Reinicie o Claude Code para as skills novas aparecerem."', 'echo "Done. Restart Claude Code for the new skills to show up."'),
+    ('echo "Abrindo o guia das skills no navegador: $AQUI/GUIA.html"', 'echo "Opening the skills guide in the browser: $AQUI/GUIA.html"'),
+    ('[[ "$ATALHOS" == (sim|yes) ]]', '[[ "$ATALHOS" == (sim|yes) ]]'),
 ]
 
 
@@ -117,6 +130,8 @@ def script(nome_pt, nome_en, textos):
         if a not in t:
             raise SystemExit(f"{nome_en}: text not found, update gerar-edicao-en.py: {a[:70]}")
         t = t.replace(a, b)
+    if nome_en == "instalar-en.sh":
+        t = re.sub(r"^TODAS=\(.*\)$", "TODAS=(roteiro-de-teste bdd-antes conversao-preparar conversao-fidelidade conversao-paridade conversao-android conversao-ios test-checklist bdd-first $CONVERSAO)", t, count=1, flags=re.M)
     # Guard: the English edition never installs next to the Portuguese one.
     if nome_en == "instalar-en.sh":
         guarda = ('\nfor s in roteiro-de-teste bdd-antes conversao-preparar conversao-fidelidade conversao-paridade conversao-android conversao-ios; do\n'

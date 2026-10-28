@@ -1,11 +1,14 @@
 #!/bin/zsh
-# Installs the family's skills (test-checklist, bdd-first and the iPhone ⇄ Android conversion skills, either way) into ~/.claude/skills.
-# /test-checklist is the base of the conversion skills: it ALWAYS comes first when one of them is chosen. English edition.
-# A /bdd-first funciona sozinha: escolhida sozinha, entra sem a /test-checklist.
+# Installs the family's skills (test-checklist, bdd-first and the iPhone ⇄ Android conversion skills, either way) into ~/.claude/skills. English edition.
+# /test-checklist is the base of the conversion skills: it ALWAYS comes first when one of them is chosen.
+# /bdd-first works alone: chosen alone, it is installed without /test-checklist.
 #   zsh instalar-en.sh                                  menu: 1 only test-checklist · 2 choose · 3 all
-#   zsh instalar-en.sh --todas                          sem menu, instala todas as que o pacote tem
+#   zsh instalar-en.sh --todas                          no menu, installs every skill the package has
 #   zsh instalar-en.sh --skills conversion-prepare,...  no menu, only those named (+ test-checklist if a conversion skill is named)
+#   --atalhos yes|no                                 with test-checklist: the editable-HTML button in the Dock and on the Desktop
+#                                                    (without it, asks; with no terminal to ask, does not create them)
 # Before replacing an existing skill that differs, keeps a copy in ~/Ferramentas/html-salvavel/backups/.
+# At the end, opens GUIA.html in the browser, on the installed skill's tab, showing what is installed.
 set -e
 AQUI="$(cd "$(dirname "$0")" && pwd)"
 DEST="$HOME/.claude/skills"
@@ -15,9 +18,20 @@ FAMILIA=(bdd-first $CONVERSAO)
 typeset -a ESCOLHA
 existe() { [[ -d "$AQUI/skills-en/$1" ]]; }
 
-case "$1" in
-  --todas) for s in $FAMILIA; do existe $s && ESCOLHA+=($s); done; ESCOLHA+=(test-checklist) ;;
-  --skills) ESCOLHA=(${(s:,:)2}) ;;
+MODO="" LISTA="" ATALHOS=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --todas) MODO=todas ;;
+    --skills) MODO=lista; LISTA="$2"; shift ;;
+    --atalhos) ATALHOS="$2"; shift ;;
+    *) echo "usage: zsh instalar-en.sh [--todas | --skills a,b] [--atalhos yes|no]"; exit 1 ;;
+  esac
+  shift
+done
+
+case "$MODO" in
+  todas) for s in $FAMILIA; do existe $s && ESCOLHA+=($s); done; ESCOLHA+=(test-checklist) ;;
+  lista) ESCOLHA=(${(s:,:)LISTA}) ;;
   "")
     echo "Skill family: /test-checklist, /bdd-first and the iPhone ⇄ Android conversion skills"
     echo "/test-checklist is the base of the conversion skills and comes first when one of them is chosen."
@@ -34,7 +48,6 @@ case "$1" in
       3) for s in $FAMILIA; do existe $s && ESCOLHA+=($s); done; ESCOLHA+=(test-checklist) ;;
       *) echo "Invalid option: nothing was installed."; exit 1 ;;
     esac ;;
-  *) echo "usage: zsh instalar-en.sh [--todas | --skills a,b]"; exit 1 ;;
 esac
 
 for s in $ESCOLHA; do
@@ -64,10 +77,60 @@ instala() {
 
 for s in $ESCOLHA; do instala $s; done
 
-# What /test-checklist needs outside the skills: only a warning; the skill itself asks before installing
-[[ -d "$HOME/Ferramentas/html-salvavel" ]] || echo "! Missing the tool that saves into the HTML: ask Claude for \"/test-checklist\" (step 1) or copy skills-en/test-checklist/pacote to ~/Ferramentas/html-salvavel"
-[[ -d "$HOME/Applications/Abrir HTML Salvável.app" ]] || echo "! Missing the Dock app: zsh ~/Ferramentas/html-salvavel/app/instalar-app.sh"
+# The editable-HTML button: the saving tool, the "Abrir HTML Salvável" app and its shortcut in the Dock and on the Desktop.
+HS="$HOME/Ferramentas/html-salvavel"
+APP="$HOME/Applications/Abrir HTML Salvável.app"
+DOCK=nao MESA=nao
+if [[ -d "$DEST/test-checklist" ]]; then
+  if [[ -z "$ATALHOS" ]]; then
+    if [[ -t 0 ]]; then
+      echo
+      echo "/test-checklist opens the editable HTML pages through a button: the \"Abrir HTML Salvável\" app (Open Saveable HTML)."
+      read "r?Put that button in the Dock and on the Desktop? (y/n) "
+      [[ "$r" == [yY]* ]] && ATALHOS=sim || ATALHOS=nao
+    else
+      ATALHOS=nao
+    fi
+  fi
+  if [[ "$ATALHOS" == (sim|yes) ]]; then
+    mkdir -p "$HS"
+    cp -Rp "$DEST/test-checklist/pacote/." "$HS/"
+    chmod +x "$HS/abrir-html-salvavel.command" "$HS/servidor.py" "$HS/abrir-pasta.sh" 2>/dev/null || true
+    zsh "$HS/app/instalar-app.sh" >/dev/null 2>&1 && echo "+ \"Abrir HTML Salvável\" app in ~/Applications"
+    if [[ -z "$SEM_DOCK" ]] && command -v defaults >/dev/null; then
+      if ! defaults read com.apple.dock persistent-apps 2>/dev/null | grep -q "Abrir%20HTML%20Salv"; then
+        URL="file://$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$APP")/"
+        defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>$URL</string><key>_CFURLStringType</key><integer>15</integer></dict></dict></dict>"
+        killall Dock 2>/dev/null || true
+        echo "+ button in the Dock"
+      else
+        echo "= the button is already in the Dock"
+      fi
+    fi
+    mkdir -p "$HOME/Desktop"
+    ln -sfn "$APP" "$HOME/Desktop/Abrir HTML Salvável.app"
+    ln -sfn "$AQUI/GUIA.html" "$HOME/Desktop/Skills guide.html"
+    echo "+ on the Desktop: \"Abrir HTML Salvável\" and \"Skills guide\""
+  fi
+fi
+# What really exists (from this install or an earlier one), for the guide to show.
+[[ -e "$HOME/Desktop/Abrir HTML Salvável.app" ]] && MESA=sim
+[[ -z "$SEM_DOCK" ]] && defaults read com.apple.dock persistent-apps 2>/dev/null | grep -q "Abrir%20HTML%20Salv" && DOCK=sim
+
+# The guide shows what is installed: the installer writes instaladas.js next to GUIA.html.
+TODAS=(roteiro-de-teste bdd-antes conversao-preparar conversao-fidelidade conversao-paridade conversao-android conversao-ios test-checklist bdd-first $CONVERSAO)
+typeset -a TEM
+for s in $TODAS; do [[ -d "$DEST/$s" ]] && TEM+=("\"$s\""); done
+cat > "$AQUI/instaladas.js" <<EOF
+// Written by the installer on $(date "+%Y-%m-%d %H:%M"). Do not edit: run the installer again.
+window.INSTALADAS = {"skills": [${(j:, :)TEM}], "abrir": "${ESCOLHA[-1]}", "quando": "$(date +%s)", "dock": "$DOCK", "mesa": "$MESA"};
+EOF
+
 for a in independent-qa independent-auditor; do
-  [[ -f "$HOME/.claude/agents/$a.md" ]] || echo "! Missing the agent $a: cp -p \"$AQUI/skills-en/test-checklist/pacote/agentes/$a.md\" ~/.claude/agents/"
+  if [[ -d "$DEST/test-checklist" && ! -f "$HOME/.claude/agents/$a.md" ]]; then
+    echo "! Missing the agent $a: cp -p \"$AQUI/skills-en/test-checklist/pacote/agentes/$a.md\" ~/.claude/agents/"
+  fi
 done
 echo "Done. Restart Claude Code for the new skills to show up."
+echo "Opening the skills guide in the browser: $AQUI/GUIA.html"
+[[ -n "$SEM_ABRIR" ]] || open "$AQUI/GUIA.html" 2>/dev/null || true

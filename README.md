@@ -41,6 +41,13 @@ Os exemplos usam a **Trilha dos Bichos**, um app inventado (uma trilha da Flores
 
 3. Reinicie o Claude Code. Skills e agentes novos só aparecem numa sessão nova.
 
+### Depois de instalar: o que aparece
+
+- **O guia abre sozinho no navegador.** É o `GUIA.html` desta pasta, na aba da skill que você acabou de instalar. Ele mostra quais skills estão instaladas neste Mac: as instaladas têm os links ativos e ligados entre si; as outras aparecem apagadas, com "não instalada". Funciona igual para quem instala só a `/roteiro-de-teste`, só a `/bdd-antes` ou as de conversão. O guia tem um botão **EN** para inglês.
+- **O botão do HTML editável** (com a `/roteiro-de-teste`). O instalador pergunta se pode pôr o app **"Abrir HTML Salvável"** no **Dock** e na **Mesa** (Desktop). É ele que abre os roteiros de teste **podendo salvar**: clique, escolha a pasta do projeto, e o navegador abre o roteiro com "💾 Salvando no arquivo" no topo (uma janela do Terminal fica aberta enquanto você testa). O guia mostra esse botão em destaque, com o ícone e o passo a passo.
+- **Na Mesa** ficam dois atalhos: **"Abrir HTML Salvável"** e **"Guia das skills"**, para reabrir o guia quando quiser.
+- Para criar os atalhos depois: `zsh ~/Ferramentas/conversao-ios-android/instalar.sh --skills roteiro-de-teste --atalhos sim`.
+
 ### A janela de escolha (passo 0 de toda skill)
 
 Toda skill da família começa pelo **passo 0**: mostra as sete skills, com a situação de cada uma (*instalada*, *falta*, *desatualizada*) e o que ela faz, e pergunta quais você quer naquele projeto.

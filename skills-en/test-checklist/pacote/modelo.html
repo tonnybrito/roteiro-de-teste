@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelo salvável</title>
+  <style>
+    :root { --bg: #f6f7f9; --surface: #fff; --text: #1f2430; --muted: #6b7280; --line: #e5e7eb; --brand: #5E6AD2; --ok: #16a34a; --warn: #b45309; --fail: #dc2626; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0f1218; --surface: #161a22; --text: #e5e7eb; --muted: #9ca3af; --line: #2a2f3a; --brand: #7C8FF5; --ok: #4ade80; --warn: #fbbf24; --fail: #f87171; } }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 24px 16px; }
+    header { max-width: 900px; margin: 0 auto 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .modo { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--line); }
+    .modo.on { background: var(--ok); color: #fff; }
+    .cards { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .seg { display: flex; gap: 6px; }
+    .seg button, .salvar { flex: 1; font: inherit; font-size: 12px; font-weight: 700; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+    .seg button.on.pass { background: var(--ok); color: #fff; } .seg button.on.fail { background: var(--fail); color: #fff; } .seg button.on.skip { background: var(--muted); color: #fff; }
+    textarea { font: inherit; font-size: 13px; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); resize: vertical; }
+    .linha { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .estado { font-size: 12px; font-weight: 700; color: var(--muted); } .estado.sujo { color: var(--warn); } .estado.ok { color: var(--ok); }
+    .salvar { flex: 0 0 auto; padding: 6px 12px; background: var(--brand); border-color: var(--brand); color: #fff; } .salvar[disabled] { opacity: .45; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="font-size:20px">Modelo de HTML salvável</h1>
+    <span class="modo" id="modo">👁 Só leitura</span>
+  </header>
+  <div class="cards" id="cards"></div>
+
+  <!-- 1. A gaveta de dados: o servidor grava aqui. Precisa existir exatamente uma vez, com este id. -->
+  <script type="application/json" id="dados-salvos">{}</script>
+
+  <script>
+    /* 2. O conteúdo da página: troque pelos itens do seu projeto. */
+    const ITENS = [
+      { id: 'item-1', titulo: 'Primeiro item para conferir' },
+      { id: 'item-2', titulo: 'Segundo item para conferir' },
+      { id: 'item-3', titulo: 'Terceiro item para conferir' }
+    ];
+
+    /* 3. Estado: SALVO é o que está no arquivo; ATUAL é o que está na tela. */
+    const clone = o => JSON.parse(JSON.stringify(o || {}));
+    let SALVO = {};
+    try { SALVO = JSON.parse(document.getElementById('dados-salvos').textContent || '{}').itens || {}; } catch (e) {}
+    const ATUAL = clone(SALVO);
+    const ARQUIVO = decodeURIComponent(location.pathname.split('/').pop() || '');
+    let PODE_SALVAR = false;
+
+    const norm = a => ({ resultado: (a || {}).resultado || '', nota: (a || {}).nota || '' });
+    const sujo = id => JSON.stringify(norm(ATUAL[id])) !== JSON.stringify(norm(SALVO[id]));
+    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    function linhaHTML(id) {
+      const s = sujo(id), salvo = norm(SALVO[id]);
+      const estado = s ? '<span class="estado sujo">● Não salvo</span>'
+        : (salvo.resultado || salvo.nota) ? '<span class="estado ok">✓ Salvo no arquivo</span>' : '<span class="estado"></span>';
+      return `${estado}<button class="salvar" onclick="salvar('${id}')" ${s ? '' : 'disabled'}>💾 Salvar</button>`;
+    }
+    function cardHTML(it) {
+      const a = norm(ATUAL[it.id]);
+      const b = (v, rot) => `<button class="${v} ${a.resultado === v ? 'on' : ''}" onclick="marcar('${it.id}','${v}')">${rot}</button>`;
+      return `<div class="card" data-id="${it.id}">
+        <strong>${it.titulo}</strong>
+        <div class="seg">${b('pass', '✅ Passou')}${b('fail', '❌ Falhou')}${b('skip', '🚫 Não testado')}</div>
+        <textarea rows="2" placeholder="Nota" oninput="anotar('${it.id}', this.value)">${esc(a.nota)}</textarea>
+        <div class="linha">${linhaHTML(it.id)}</div>
+      </div>`;
+    }
+    function render() { document.getElementById('cards').innerHTML = ITENS.map(cardHTML).join(''); }
+    function atualizarLinha(id) { document.querySelector(`.card[data-id="${id}"] .linha`).innerHTML = linhaHTML(id); }
+
+    function marcar(id, v) {
+      ATUAL[id] = norm(ATUAL[id]);
+      ATUAL[id].resultado = ATUAL[id].resultado === v ? '' : v;
+      render();
+    }
+    function anotar(id, texto) { ATUAL[id] = norm(ATUAL[id]); ATUAL[id].nota = texto; atualizarLinha(id); }
+
+    /* 4. Salvar: manda TUDO o que deve ficar no arquivo; o servidor troca o conteúdo da gaveta. */
+    async function salvar(id) {
+      if (!PODE_SALVAR) return alert('Só leitura: abra pelo atalho abrir-html-salvavel.command para salvar.');
+      const novo = clone(SALVO);
+      const a = norm(ATUAL[id]);
+      if (a.resultado || a.nota) novo[id] = a; else delete novo[id];
+      try {
+        const r = await fetch('/__salvavel/salvar?arquivo=' + encodeURIComponent(ARQUIVO), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Salvavel': '1' },
+          body: JSON.stringify({ versao: 1, salvoEm: new Date().toISOString(), itens: novo })
+        });
+        const j = await r.json();
+        if (!j.ok) throw new Error(j.erro);
+        SALVO = novo;
+        atualizarLinha(id);
+      } catch (e) { alert('Não salvou: ' + (e.message || e) + '. A janela do Terminal está aberta?'); }
+    }
+
+    /* 5. Descobre se foi aberto pelo atalho (com servidor) ou direto (só leitura). */
+    (async () => {
+      if (location.protocol.startsWith('http')) {
+        try { PODE_SALVAR = (await (await fetch('/__salvavel/status', { cache: 'no-store' })).json()).ok === true; } catch (e) {}
+      }
+      const el = document.getElementById('modo');
+      el.textContent = PODE_SALVAR ? '💾 Salvando no arquivo' : '👁 Só leitura';
+      el.classList.toggle('on', PODE_SALVAR);
+    })();
+    window.addEventListener('beforeunload', e => { if (ITENS.some(it => sujo(it.id))) { e.preventDefault(); e.returnValue = ''; } });
+    render();
+  </script>
+</body>
+</html>

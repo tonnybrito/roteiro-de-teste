@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BDD {{PROJETO}}</title>
+<!--
+  Model page of the /bdd-first skill. Copy it to BDD/bdd-<project>.html and
+  replace {{PROJETO}} and everything inside <main> (the example tabs).
+  Fixed: <head>, <style>, the header, the #bdd-resultados block and the last <script>.
+  Every action (command or click) is a Dado / Quando / Então scenario card:
+  <div class="cen" id="X-01">. Every screen or destination is a tab:
+  <section class="tab" id="..." data-title data-title-en data-group data-group-en>.
+  The first tab is always id="inicio" (it holds #health and #resumo); finding
+  cards use ids AC-NN and are not scenarios. Bilingual: every text is a pair
+  <span class="pt"> / <span class="en">. Theme: data-theme on <html>.
+  Self-contained: no external fonts or scripts, works offline.
+-->
+<style>
+  :root {
+    --ground: #f4f5f2; --paper: #ffffff; --ink: #1c2126; --soft: #5a646d; --rule: #d8dcd6;
+    --steel: #2f5d7c; --steel-bg: #e4edf4; --go: #1f7a4d; --go-bg: #e3f2ea; --warn: #9a6400; --warn-bg: #fbefd6;
+    --stop: #a3342c; --stop-bg: #f7e3e1; --code: #eef0ec; --ui: #1a73e8; --ui-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ground: #14181b; --paper: #1c2226; --ink: #e5e8e5; --soft: #9aa5ae; --rule: #313a40;
+      --steel: #86b5d6; --steel-bg: #1d2c37; --go: #6fd09b; --go-bg: #173327; --warn: #e8b453; --warn-bg: #3a2e14;
+      --stop: #f08b82; --stop-bg: #3b1f1c; --code: #262d31; --ui: #8ab4f8; --ui-ink: #10161c; }
+  }
+  :root[data-theme="dark"] { --ground: #14181b; --paper: #1c2226; --ink: #e5e8e5; --soft: #9aa5ae; --rule: #313a40;
+    --steel: #86b5d6; --steel-bg: #1d2c37; --go: #6fd09b; --go-bg: #173327; --warn: #e8b453; --warn-bg: #3a2e14;
+    --stop: #f08b82; --stop-bg: #3b1f1c; --code: #262d31; --ui: #8ab4f8; --ui-ink: #10161c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body:not(.l-en) .en, body.l-en .pt { display: none !important; }
+  header.top { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); }
+  .top-in { max-width: 980px; margin: 0 auto; padding: 10px 16px; }
+  .title-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 14px; justify-content: space-between; }
+  .title-row h1 { font-size: 18px; margin: 0; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+  .eyebrow { font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--steel); }
+  select { font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); max-width: 100%; }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+  .seg button { font: 600 13px -apple-system, BlinkMacSystemFont, sans-serif; background: var(--paper); color: var(--soft); border: 0; padding: 7px 10px; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--rule); }
+  .seg button[aria-pressed="true"] { background: var(--steel); color: var(--paper); }
+  nav.tabs { display: flex; gap: 4px; overflow-x: auto; margin-top: 8px; padding-bottom: 2px; scrollbar-width: thin; }
+  nav.tabs a { flex: none; text-decoration: none; color: var(--soft); font-size: 13px; padding: 6px 10px; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+  nav.tabs a:hover { color: var(--ink); }
+  nav.tabs a.on { color: var(--steel); border-bottom-color: var(--steel); font-weight: 600; }
+  main { max-width: 980px; margin: 0 auto; padding: 18px 16px 80px; }
+  section.tab { display: none; }
+  section.tab.on { display: block; }
+  h2 { font-size: 24px; margin: 6px 0 4px; }
+  h3 { font-size: 17px; margin: 26px 0 8px; }
+  p, li { max-width: 72ch; }
+  .lede { color: var(--soft); }
+  code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+  a { color: var(--steel); }
+  .where { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; color: var(--soft); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  .where b { color: var(--ink); }
+  .cen { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 16px; margin: 12px 0; scroll-margin-top: 130px; }
+  .cen:target { outline: 2px solid var(--steel); }
+  .cen h4 { margin: 0 0 6px; font-size: 16px; }
+  .cen h4 .id { font: 600 12px ui-monospace, Menlo, monospace; color: var(--steel); background: var(--steel-bg); padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
+  .gwt { display: grid; grid-template-columns: 76px 1fr; gap: 4px 10px; margin: 0; }
+  .gwt dt { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; padding-top: 2px; }
+  .gwt dt.d { color: var(--soft); } .gwt dt.q { color: var(--warn); } .gwt dt.e, .gwt dt.ee { color: var(--go); }
+  dt.d::before { content: "Dado"; } dt.q::before { content: "Quando"; } dt.e::before { content: "Então"; } dt.ee::before { content: "E"; }
+  .l-en dt.d::before { content: "Given"; } .l-en dt.q::before { content: "When"; } .l-en dt.e::before { content: "Then"; } .l-en dt.ee::before { content: "And"; }
+  .gwt dd { margin: 0; }
+  .why { margin-top: 8px; font-size: 14px; color: var(--soft); border-top: 1px dashed var(--rule); padding-top: 6px; }
+  .ui { display: inline-block; background: var(--ui); color: var(--ui-ink); text-decoration: none; font-size: 13px; font-weight: 600; padding: 1px 9px; border-radius: 6px; white-space: nowrap; }
+  .ui.ghost { background: transparent; color: var(--ui); border: 1px solid var(--ui); }
+  .ir { font-weight: 600; }
+  .ir::after { content: " →"; }
+  .broken { background: var(--stop-bg) !important; color: var(--stop) !important; outline: 2px solid var(--stop); }
+  .note { border-left: 3px solid var(--steel); padding: 8px 14px; background: var(--paper); margin: 12px 0; border-radius: 0 8px 8px 0; }
+  .warn { border-left-color: var(--warn); background: var(--warn-bg); }
+  .stop { border-left-color: var(--stop); background: var(--stop-bg); }
+  .ok { border-left-color: var(--go); background: var(--go-bg); }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; margin: 8px 0; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { color: var(--soft); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .scroll { overflow-x: auto; }
+  .map { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 12px 0; }
+  .map a { display: block; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; text-decoration: none; color: var(--ink); }
+  .map a small { display: block; color: var(--soft); font-size: 13px; }
+  .map a:hover { border-color: var(--steel); }
+  .inbound { font-size: 14px; color: var(--soft); margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; }
+  .inbound a { margin-right: 10px; }
+  .health { font-weight: 600; }
+  .health.bad { color: var(--stop); }
+  /* Test results, embedded by the BDD runner (block #bdd-resultados) */
+  .res { display: inline-block; margin-left: 8px; font: 600 12px -apple-system, sans-serif; padding: 2px 8px; border-radius: 999px; vertical-align: 2px; }
+  .res.passed { background: var(--go-bg); color: var(--go); }
+  .res.failed { background: var(--stop-bg); color: var(--stop); }
+  .res.manual, .res.none { background: var(--code); color: var(--soft); }
+  .res-msg { margin: 6px 0 0; font: 13px/1.4 ui-monospace, Menlo, monospace; color: var(--stop); white-space: pre-wrap; }
+  details.gherkin { margin-top: 8px; font-size: 13px; }
+  details.gherkin summary { cursor: pointer; color: var(--steel); }
+  details.gherkin pre { margin: 6px 0 0; white-space: pre-wrap; }
+  .tally { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  @media (max-width: 600px) { .gwt { grid-template-columns: 1fr; gap: 0; } .gwt dd { margin-bottom: 6px; } h2 { font-size: 21px; } }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="top-in">
+  <div class="title-row">
+    <div><div class="eyebrow">{{PROJETO}} · BDD</div><h1><span class="pt">BDD do {{PROJETO}}</span><span class="en">{{PROJETO}} BDD</span></h1></div>
+    <div class="controls">
+      <label><span class="eyebrow"><span class="pt">Ir para a aba</span><span class="en">Go to tab</span></span><br><select id="jump"></select></label>
+      <div><span class="eyebrow"><span class="pt">Idioma</span><span class="en">Language</span></span><br>
+        <div class="seg" id="lang"><button type="button" data-v="pt">PT</button><button type="button" data-v="en">EN</button></div></div>
+      <div><span class="eyebrow"><span class="pt">Tema</span><span class="en">Theme</span></span><br>
+        <div class="seg" id="theme"><button type="button" data-v="auto"><span class="pt">Auto</span><span class="en">Auto</span></button><button type="button" data-v="light"><span class="pt">Claro</span><span class="en">Light</span></button><button type="button" data-v="dark"><span class="pt">Escuro</span><span class="en">Dark</span></button></div></div>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div></header>
+
+<main>
+
+<!-- ================================================================ -->
+<section class="tab" id="inicio" data-title="Início" data-title-en="Start" data-group="Começo" data-group-en="Start">
+  <h2><span class="pt">Como ler este BDD</span><span class="en">How to read this BDD</span></h2>
+  <p class="lede"><span class="pt">BDD (<i>Behaviour-Driven Development</i>, "desenvolvimento guiado por comportamento") é uma forma de descrever o que um sistema faz <b>em frases de gente</b>, antes de olhar o código. Cada frase é um <b>cenário</b>, com três partes:</span><span class="en">BDD (<i>Behaviour-Driven Development</i>) describes what a system does <b>in plain sentences</b>, before looking at the code. Each sentence is a <b>scenario</b>, in three parts:</span></p>
+  <div class="scroll"><table>
+    <tr><th><span class="pt">Parte</span><span class="en">Part</span></th><th><span class="pt">Quer dizer</span><span class="en">Means</span></th></tr>
+    <tr><td><b><span class="pt">Dado</span><span class="en">Given</span></b></td><td><span class="pt">a situação em que você está antes de agir</span><span class="en">where you are before acting</span></td></tr>
+    <tr><td><b><span class="pt">Quando</span><span class="en">When</span></b></td><td><span class="pt">a ação: um comando que você digita ou um botão que você clica</span><span class="en">the action: a command you type or a button you click</span></td></tr>
+    <tr><td><b><span class="pt">Então</span><span class="en">Then</span></b></td><td><span class="pt">o que deve acontecer, e que dá para conferir com os olhos</span><span class="en">what must happen, which you can check with your own eyes</span></td></tr>
+  </table></div>
+  <div class="note"><span class="pt"><b>Como as abas funcionam.</b> Cada tela, ou lugar para onde uma ação te leva, tem a sua aba. Um <span class="ui">botão azul</span> aqui é um botão que existe de verdade no produto; clicar nele leva à aba onde você vai parar. Um link com seta faz o mesmo. Para pular direto, use o menu <b>Ir para a aba</b>. O botão Voltar do navegador também funciona.</span><span class="en"><b>How the tabs work.</b> Every screen, or place an action takes you, has its own tab. A <span class="ui">blue button</span> here is a real button in the product; clicking it takes you to the tab where you would land. An arrow link does the same. To jump directly, use the <b>Go to tab</b> menu. The browser's Back button works too.</span></div>
+  <div class="note ok"><span class="pt"><b>Os links se conferem sozinhos.</b> Ao abrir esta página, um verificador passa por todos os links. Se algum apontar para uma aba que não existe, ele fica vermelho e o aviso abaixo muda.</span><span class="en"><b>Links check themselves.</b> When this page opens, a checker walks every link. If one points to a tab that does not exist, it turns red and the notice below changes.</span><br><span class="health" id="health"></span></div>
+  <div class="note" id="resumo"></div>
+
+  <h3><span class="pt">O caminho</span><span class="en">The path</span></h3>
+  <div class="map">
+    <a href="#exemplo"><span class="pt">1 · Exemplo<small>uma aba por tela ou destino</small></span><span class="en">1 · Example<small>one tab per screen or destination</small></span></a>
+    <a href="#achados"><span class="pt">Achados<small>o que os testes encontraram</small></span><span class="en">Findings<small>what the tests found</small></span></a>
+    <a href="#glossario"><span class="pt">Glossário<small>palavras novas</small></span><span class="en">Glossary<small>new words</small></span></a>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section class="tab" id="exemplo" data-title="1 · Exemplo" data-title-en="1 · Example" data-group="Exemplo" data-group-en="Example">
+  <h2><span class="pt">1 · Exemplo</span><span class="en">1 · Example</span></h2>
+  <p class="lede"><span class="pt">Uma frase sobre esta tela: o que ela é e para que serve.</span><span class="en">One sentence about this screen: what it is and what it is for.</span></p>
+  <div class="where"><span><b><span class="pt">Vem de:</span><span class="en">Comes from:</span></b> <a class="ir" href="#inicio"><span class="pt">Início</span><span class="en">Start</span></a></span></div>
+
+  <div class="cen" id="E-01"><h4><span class="id">E-01</span><span class="pt">Título curto do cenário</span><span class="en">Short scenario title</span></h4><dl class="gwt">
+    <dt class="d"></dt><dd><span class="pt">que estou nesta tela</span><span class="en">I am on this screen</span></dd>
+    <dt class="q"></dt><dd><span class="pt">clico em</span><span class="en">I click</span> <a class="ui" href="#glossario">Botão real</a></dd>
+    <dt class="e"></dt><dd><span class="pt">vou para a</span><span class="en">I land on the</span> <a class="ir" href="#glossario"><span class="pt">tela de destino</span><span class="en">destination screen</span></a></dd>
+    <dt class="ee"></dt><dd><span class="pt">vejo o que deve aparecer</span><span class="en">I see what must show</span></dd>
+  </dl>
+  <div class="why"><span class="pt">Por quê: o que este cenário protege.</span><span class="en">Why: what this scenario protects.</span></div></div>
+</section>
+
+<!-- ================================================================ -->
+<section class="tab" id="achados" data-title="Achados" data-title-en="Findings" data-group="Consulta" data-group-en="Reference">
+  <h2><span class="pt">Achados</span><span class="en">Findings</span></h2>
+  <p class="lede"><span class="pt">O que os testes do BDD encontraram de diferente entre o que o projeto diz e o que ele faz. Os cenários ligados a eles ficam falhando de propósito, como prova, até alguém decidir.</span><span class="en">What the BDD tests found to differ between what the project says and what it does. Their scenarios keep failing on purpose, as evidence, until someone decides.</span></p>
+
+  <div class="cen" id="AC-01"><h4><span class="id">AC-01</span><span class="pt">Título do achado</span><span class="en">Finding title</span></h4>
+    <p><span class="pt">O que o projeto diz, o que ele faz, e onde.</span><span class="en">What the project says, what it does, and where.</span></p>
+    <div class="why"><span class="pt">Prova:</span><span class="en">Evidence:</span> <a href="#E-01">E-01</a></div></div>
+</section>
+
+<!-- ================================================================ -->
+<section class="tab" id="glossario" data-title="Glossário" data-title-en="Glossary" data-group="Consulta" data-group-en="Reference">
+  <h2><span class="pt">Glossário</span><span class="en">Glossary</span></h2>
+  <div class="scroll"><table>
+    <tr><th><span class="pt">Termo</span><span class="en">Term</span></th><th><span class="pt">Em palavras simples</span><span class="en">In plain words</span></th></tr>
+    <tr><td><span class="pt">Cenário</span><span class="en">Scenario</span></td><td><span class="pt">Uma ação descrita em Dado / Quando / Então.</span><span class="en">One action described as Given / When / Then.</span></td></tr>
+  </table></div>
+</section>
+
+</main>
+
+<!-- Written by ferramentas/bdd_html.py after each test run. Edit the tests, never this block. -->
+<script type="application/json" id="bdd-resultados">{}</script>
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section.tab"));
+  var nav = document.getElementById("tabs");
+  var jump = document.getElementById("jump");
+  var health = document.getElementById("health");
+  var lang = "pt";
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function title(s) { return lang === "en" ? s.dataset.titleEn : s.dataset.title; }
+
+  // Which tab owns an anchor: the tab itself, or the tab holding that scenario.
+  function tabOf(hash) {
+    var el = hash && document.getElementById(hash);
+    if (!el) return null;
+    var sec = el.closest("section.tab");
+    return sec ? sec.id : null;
+  }
+
+  // Link check, done once; the result is re-labelled when the language changes.
+  var links = document.querySelectorAll('main a[href^="#"]');
+  var inbound = {}, broken = 0;
+  links.forEach(function (a) {
+    var target = a.getAttribute("href").slice(1);
+    var t = tabOf(target);
+    if (!t) { a.classList.add("broken"); a.title = target; broken++; return; }
+    var from = a.closest("section.tab").id;
+    if (from !== t && from !== "inicio") (inbound[t] = inbound[t] || {})[from] = true;
+  });
+
+  // Test results embedded by the runner: a badge and the Gherkin on every scenario card.
+  var RES = {};
+  try { RES = JSON.parse(document.getElementById("bdd-resultados").textContent || "{}"); } catch (e) {}
+  var runs = RES.scenarios || {};
+  var cards = Array.prototype.slice.call(document.querySelectorAll("main .cen")).filter(function (c) { return !/^AC-/.test(c.id); });
+  var tally = { passed: 0, failed: 0, manual: 0, none: 0 };
+  var LABEL = {
+    passed: ["✅ passou", "✅ passed"], failed: ["❌ falhou", "❌ failed"],
+    manual: ["✋ conferir na mão", "✋ check by hand"], none: ["⚪ sem resultado ainda", "⚪ no result yet"]
+  };
+  function both(pair) { return '<span class="pt">' + pair[0] + '</span><span class="en">' + pair[1] + "</span>"; }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  cards.forEach(function (c) {
+    var r = runs[c.id] || {}, st = LABEL[r.status] ? r.status : "none";
+    tally[st]++;
+    var b = document.createElement("span"); b.className = "res " + st; b.innerHTML = both(LABEL[st]);
+    c.querySelector("h4").appendChild(b);
+    if (st === "failed" && r.message) {
+      var m = document.createElement("pre"); m.className = "res-msg"; m.textContent = r.message; c.appendChild(m);
+    }
+    if (r.gherkin) {
+      var d = document.createElement("details"); d.className = "gherkin";
+      d.innerHTML = "<summary>" + both(["ver o .feature", "see the .feature"]) + " · <code>" + esc(r.feature + ":" + r.line) + "</code></summary><pre>" + esc(r.gherkin) + "</pre>";
+      c.appendChild(d);
+    }
+  });
+  var htmlIds = cards.map(function (c) { return c.id; });
+  var onlyHtml = Object.keys(runs).length ? htmlIds.filter(function (i) { return !runs[i]; }) : [];
+  var onlyFeature = Object.keys(runs).filter(function (i) { return htmlIds.indexOf(i) < 0; });
+
+  // Tabs bar, grouped dropdown, inbound lists and the health line: rebuilt per language.
+  function build() {
+    nav.innerHTML = ""; jump.innerHTML = "";
+    // The menu keeps the tabs' order; a group label only joins tabs that sit side by side.
+    var group = null, groupName = null;
+    sections.forEach(function (s) {
+      var a = document.createElement("a");
+      a.href = "#" + s.id; a.textContent = title(s); a.dataset.tab = s.id;
+      nav.appendChild(a);
+      var g = lang === "en" ? s.dataset.groupEn : s.dataset.group;
+      if (g !== groupName) { group = document.createElement("optgroup"); group.label = groupName = g; jump.appendChild(group); }
+      var o = document.createElement("option"); o.value = s.id; o.textContent = title(s);
+      group.appendChild(o);
+      var old = s.querySelector(".inbound"); if (old) old.remove();
+      var srcs = Object.keys(inbound[s.id] || {});
+      if (srcs.length) {
+        var div = document.createElement("div"); div.className = "inbound";
+        div.innerHTML = "<b>" + (lang === "en" ? "You reach this tab from:" : "Você chega a esta aba a partir de:") + "</b> " +
+          srcs.map(function (id) { return '<a href="#' + id + '">' + title(document.getElementById(id)) + "</a>"; }).join("");
+        s.appendChild(div);
+      }
+    });
+    var n = links.length;
+    health.textContent = broken
+      ? (lang === "en" ? "Warning: " + broken + " of " + n + " links point to a missing tab." : "Atenção: " + broken + " de " + n + " links apontam para aba inexistente.")
+      : (lang === "en" ? "Now: " + n + " links checked, all point to a tab that exists." : "Agora: " + n + " links conferidos, todos apontam para uma aba que existe.");
+    var pairs = onlyHtml.length || onlyFeature.length;
+    if (Object.keys(runs).length) health.textContent += pairs
+      ? (lang === "en" ? " Pairs: only here " + (onlyHtml.join(", ") || "—") + "; only in the .feature files " + (onlyFeature.join(", ") || "—") + "."
+                       : " Pares: só aqui " + (onlyHtml.join(", ") || "—") + "; só nos .feature " + (onlyFeature.join(", ") || "—") + ".")
+      : (lang === "en" ? " All " + htmlIds.length + " scenarios pair with the .feature files." : " Os " + htmlIds.length + " cenários formam par com os .feature.");
+    health.classList.toggle("bad", broken > 0 || pairs > 0);
+    var when = RES.generated ? RES.generated.replace("T", " ") : "";
+    document.getElementById("resumo").innerHTML = (when
+      ? "<b>" + (lang === "en" ? "Last test run" : "Última rodada dos testes") + ":</b> " + esc(when)
+      : "<b>" + (lang === "en" ? "No test run embedded yet." : "Nenhuma rodada de testes embutida ainda.") + "</b>") +
+      '<div class="tally">' + ["passed", "failed", "manual", "none"].map(function (k) {
+        return '<span class="res ' + k + '">' + both(LABEL[k]) + " · " + tally[k] + "</span>"; }).join("") + "</div>";
+    show();
+  }
+
+  function show() {
+    var hash = decodeURIComponent(location.hash.slice(1)) || "inicio";
+    var t = tabOf(hash) || "inicio";
+    sections.forEach(function (s) { s.classList.toggle("on", s.id === t); });
+    nav.querySelectorAll("a").forEach(function (a) {
+      var on = a.dataset.tab === t; a.classList.toggle("on", on);
+      if (on) a.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+    jump.value = t;
+    var el = document.getElementById(hash);
+    if (el && el.id !== t) el.scrollIntoView({ block: "start" }); else window.scrollTo(0, 0);
+  }
+
+  function setLang(v) {
+    lang = v === "en" ? "en" : "pt";
+    document.body.classList.toggle("l-en", lang === "en");
+    document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+    document.querySelectorAll("#lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === lang)); });
+    jump.setAttribute("aria-label", lang === "en" ? "Go to tab" : "Ir para a aba");
+    nav.setAttribute("aria-label", lang === "en" ? "Tabs" : "Abas");
+    store("bdd-lang", lang);
+    build();
+  }
+
+  function setTheme(v) {
+    if (v === "light" || v === "dark") document.documentElement.dataset.theme = v;
+    else { v = "auto"; delete document.documentElement.dataset.theme; }
+    document.querySelectorAll("#theme button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === v)); });
+    store("bdd-theme", v);
+  }
+
+  document.querySelectorAll("#lang button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.v); }); });
+  document.querySelectorAll("#theme button").forEach(function (b) { b.addEventListener("click", function () { setTheme(b.dataset.v); }); });
+  jump.addEventListener("change", function () { location.hash = jump.value; });
+  window.addEventListener("hashchange", show);
+
+  setTheme(recall("bdd-theme") || "auto");
+  setLang(recall("bdd-lang") || "pt");
+})();
+</script>
+</body>
+</html>

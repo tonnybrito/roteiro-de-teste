@@ -1,0 +1,179 @@
+appId: ${APP}
+# Android end-game, theme-agnostic: screenshot every step, press whatever the step offers, until FINISH GAME.
+---
+- evalScript: ${output.e = 0}
+- repeat:
+    times: 60
+    while:
+        notVisible:
+            id: "quitButton"
+    commands:
+        - waitForAnimationToEnd:
+            timeout: 2500
+        - evalScript: ${output.e = output.e + 1}
+        - takeScreenshot: "shots/${DEV}/${THEME}-15-end-${output.e}"
+        - runFlow:
+            when:
+                visible:
+                    id: "bossTrapButton"
+            commands:
+                - longPressOn:
+                    id: "bossTrapButton"
+                - waitForAnimationToEnd:
+                    timeout: 4000
+        - runFlow:
+            when:
+                visible:
+                    id: "july4EndGameHoldButton"
+            commands:
+                - longPressOn:
+                    id: "july4EndGameHoldButton"
+                - waitForAnimationToEnd:
+                    timeout: 4000
+        - runFlow:
+            when:
+                visible:
+                    id: "easterAwakenFlameButton"
+            commands:
+                - longPressOn:
+                    id: "easterAwakenFlameButton"
+                - waitForAnimationToEnd:
+                    timeout: 4000
+        - runFlow:
+            when:
+                visible:
+                    id: "giftButton"
+            commands:
+                - longPressOn:
+                    id: "giftButton"
+                - waitForAnimationToEnd:
+                    timeout: 4000
+        - runFlow:
+            when:
+                visible:
+                    id: "xmasGiftTapArea"
+            commands:
+                - longPressOn:
+                    id: "xmasGiftTapArea"
+                - waitForAnimationToEnd:
+                    timeout: 4000
+        - runFlow:
+            when:
+                visible: "^CONTINUE$"
+            commands:
+                - tapOn: "^CONTINUE$"
+        - runFlow:
+            when:
+                visible: "^Close$"
+            commands:
+                - tapOn: "^Close$"
+        - runFlow:
+            when:
+                visible: "^CLOSE$"
+            commands:
+                - tapOn: "^CLOSE$"
+        - runFlow:
+            when:
+                visible:
+                    id: "santaThankYouContinueButton"
+            commands:
+                - tapOn:
+                    id: "santaThankYouContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "easterBossStory1ContinueButton"
+            commands:
+                - tapOn:
+                    id: "easterBossStory1ContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "easterBossStory2ContinueButton"
+            commands:
+                - tapOn:
+                    id: "easterBossStory2ContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "easterBossStory3ContinueButton"
+            commands:
+                - tapOn:
+                    id: "easterBossStory3ContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "morganaCallAnswerButton"
+            commands:
+                - tapOn:
+                    id: "morganaCallAnswerButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "morganaInfoContinueButton"
+            commands:
+                - tapOn:
+                    id: "morganaInfoContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "owlieIntroContinueButton"
+            commands:
+                - tapOn:
+                    id: "owlieIntroContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "monsterCreatedContinueButton"
+            commands:
+                - tapOn:
+                    id: "monsterCreatedContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "bossCardContinueButton"
+            commands:
+                - tapOn:
+                    id: "bossCardContinueButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "thankMessageFinishButton"
+            commands:
+                - tapOn:
+                    id: "thankMessageFinishButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "july4FullHatFinishButton"
+            commands:
+                - tapOn:
+                    id: "july4FullHatFinishButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "bossInfoCloseButton"
+            commands:
+                - tapOn:
+                    id: "bossInfoCloseButton"
+        - runFlow:
+            when:
+                visible:
+                    id: "guideDialogNextButton"
+            commands:
+                - tapOn:
+                    id: "guideDialogNextButton"
+        - runFlow:
+            when:
+                visible: "FINISH GAME"
+            commands:
+                - takeScreenshot: "shots/${DEV}/${THEME}-15-end-finish-button"
+                - tapOn: "FINISH GAME"
+        - runFlow:
+            when:
+                visible: "^Next$"
+            commands:
+                - tapOn: "^Next$"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-15-end-finish"

@@ -1,0 +1,187 @@
+appId: ${APP}
+# Part 1: carousel -> game home -> safety -> players -> team -> save QR codes -> review -> start
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+    arguments:
+      uiTest: true
+- runFlow:
+    when:
+      visible: "Permitir|Allow"
+    commands:
+      - tapOn: "Permitir|Allow"
+- waitForAnimationToEnd:
+    timeout: 4000
+- extendedWaitUntil:
+    visible: "Choose your adventure"
+    timeout: 20000
+- takeScreenshot: "shots/${DEV}/${THEME}-00-carousel"
+- repeat:
+    while:
+        notVisible: ${PLAY}
+    commands:
+        - tapOn:
+            point: ${CPOINT}
+        - waitForAnimationToEnd:
+            timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-01-carousel-game"
+- tapOn: ${PLAY}
+- runFlow:
+    when:
+        visible: "OK"
+    commands:
+        - tapOn: "OK"
+- extendedWaitUntil:
+    visible:
+        id: "startTheHuntButton"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-02-home"
+- tapOn:
+    id: "startTheHuntButton"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow:
+    when:
+        visible: "OK"
+    commands:
+        - tapOn: "OK"
+- takeScreenshot: "shots/${DEV}/${THEME}-03-safety"
+- tapOn:
+    id: "safetyWarningCheckbox"
+- takeScreenshot: "shots/${DEV}/${THEME}-03b-safety-checked"
+- tapOn:
+    id: "safetyWarningBeginButton"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-04-players"
+- tapOn:
+    id: "playerCountButton_2"
+- swipe:
+    start: "50%,62%"
+    end: "50%,25%"
+    duration: 600
+- waitForAnimationToEnd:
+    timeout: 1000
+- swipe:
+    start: "50%,62%"
+    end: "50%,25%"
+    duration: 600
+- waitForAnimationToEnd:
+    timeout: 1000
+- tapOn:
+    id: "playerNameTextField_1"
+- waitForAnimationToEnd:
+    timeout: 1000
+- inputText: "Shanti"
+- runFlow:
+    when:
+        platform: iOS
+    commands:
+        - swipe:
+            start: "50%,45%"
+            end: "50%,15%"
+            duration: 600
+        - waitForAnimationToEnd:
+            timeout: 1000
+- scrollUntilVisible:
+    element:
+        id: "playerNameTextField_2"
+    direction: DOWN
+    visibilityPercentage: 60
+    timeout: 10000
+- takeScreenshot: "shots/${DEV}/${THEME}-04c-players-scrolled"
+- tapOn:
+    id: "playerNameTextField_2"
+- waitForAnimationToEnd:
+    timeout: 1000
+- inputText: "Dev-Tester"
+- tapOn:
+    point: "50%,12%"
+- takeScreenshot: "shots/${DEV}/${THEME}-04b-players-filled"
+- tapOn:
+    id: "continueButton"
+- waitForAnimationToEnd:
+    timeout: 1800
+- runFlow:
+    when:
+        visible:
+            id: "hunterTeamNameTextField"
+    commands:
+        - takeScreenshot: "shots/${DEV}/${THEME}-05-team"
+        - tapOn:
+            id: "hunterTeamNameTextField"
+        - inputText: "BritoPets"
+        - tapOn:
+            point: "50%,12%"
+        - takeScreenshot: "shots/${DEV}/${THEME}-05b-team-filled"
+        - tapOn:
+            id: "hunterTeamNameContinueButton"
+        - waitForAnimationToEnd:
+            timeout: 1800
+- takeScreenshot: "shots/${DEV}/${THEME}-06-assets-intro"
+- tapOn:
+    id: "assetsIntroAlreadyHaveButton"
+- takeScreenshot: "shots/${DEV}/${THEME}-06b-need-assets-popup"
+- tapOn:
+    id: "alertDialogSecondaryButton"
+- tapOn:
+    id: "assetsIntroContinueButton"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-07-game-assets"
+- tapOn:
+    id: "gameAssetsPortraitCard"
+- takeScreenshot: "shots/${DEV}/${THEME}-07b-game-assets-portrait"
+- tapOn:
+    id: "gameAssetsDownloadButton"
+- extendedWaitUntil:
+    visible:
+        id: "alertDialogPrimaryButton"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 1500
+- extendedWaitUntil:
+    visible: ".*[0-9] MB.*"
+    timeout: 60000
+- takeScreenshot: "shots/${DEV}/${THEME}-08-save-confirm"
+- tapOn:
+    id: "alertDialogPrimaryButton"
+- waitForAnimationToEnd:
+    timeout: 1500
+- waitForAnimationToEnd:
+    timeout: 3000
+- extendedWaitUntil:
+    visible: ".*(Assets Saved|ASSETS SAVED|Content Downloaded|CONTENT DOWNLOADED|saved successfully|[Ff]ailed|FAIL[E]D).*"
+    timeout: 90000
+- runFlow:
+    when:
+        visible: "^Allow.*|^Permitir.*"
+    commands:
+        - tapOn: "^Allow.*|^Permitir.*"
+        - extendedWaitUntil:
+            visible: ".*(Assets Saved|ASSETS SAVED|Content Downloaded|CONTENT DOWNLOADED|saved successfully|[Ff]ailed|FAIL[E]D).*"
+            timeout: 90000
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: "shots/${DEV}/${THEME}-09-save-result"
+- tapOn:
+    id: "alertDialogPrimaryButton"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: "shots/${DEV}/${THEME}-10-review"
+- tapOn:
+    id: "hunterReviewHowToPlayButton"
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: "shots/${DEV}/${THEME}-10b-how-to-play"
+- tapOn:
+    id: "youTubePlayerCloseButton|xmark.circle.fill"
+- tapOn:
+    id: "hunterReviewStartHuntButton"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: "shots/${DEV}/${THEME}-11-after-start"

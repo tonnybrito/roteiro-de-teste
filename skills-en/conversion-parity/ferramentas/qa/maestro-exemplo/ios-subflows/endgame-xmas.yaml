@@ -1,0 +1,26 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Xmas end-game: santa thank-you -> dialogs -> open the gift -> FINISH GAME.
+# Storyboard frames keyed by ${THEME} into screenshots/flow-<THEME>/.
+---
+- takeScreenshot: "screenshots/flow-${THEME}/end-1-santa"
+- runFlow:
+    when:
+        visible:
+            id: "santaThankYouContinueButton"
+    commands:
+        - tapOn:
+            id: "santaThankYouContinueButton"
+- repeat:
+    while:
+        notVisible: .*Tap and Hold to open the gift.*
+    commands:
+        - tapOn:
+            text: "Next"
+            waitUntilVisible: true
+- takeScreenshot: "screenshots/flow-${THEME}/end-2-gift"
+- longPressOn: "creatures-trap-xmas"
+- extendedWaitUntil:
+    visible: "FINISH GAME"
+    timeout: 25000
+- takeScreenshot: "screenshots/flow-${THEME}/end-3-finish"
+- tapOn: "FINISH GAME"

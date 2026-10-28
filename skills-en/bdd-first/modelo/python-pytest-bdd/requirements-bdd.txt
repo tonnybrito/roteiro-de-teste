@@ -1,0 +1,3 @@
+# BDD tools only. Installed on top of the project's own requirements:
+#   uv pip install -r BDD/requirements-bdd.txt --python .venv/bin/python
+pytest-bdd==9.0.0

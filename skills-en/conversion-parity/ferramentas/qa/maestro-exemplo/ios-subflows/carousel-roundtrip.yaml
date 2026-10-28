@@ -1,0 +1,52 @@
+appId: com.exemplo.trilhadosbichos.ios
+# Reusable: rotate the carousel to ${PLAY_BUTTON}'s game, open it, verify we're
+# on that game's home, then return to the carousel.
+# Tapping the right edge of the carousel rotates one game per tap, so repeat
+# until the target game's PLAY button is centered (position-independent).
+---
+- repeat:
+    while:
+        notVisible: ${PLAY_BUTTON}
+    commands:
+        - tapOn:
+            point: "85%,50%"
+        - waitForAnimationToEnd:
+            timeout: 1500
+# Open the game
+- tapOn: ${PLAY_BUTTON}
+# If a game from a previous round-trip is still active, confirm switching worlds
+- runFlow:
+    when:
+        visible: .*Before You Go.*
+    commands:
+        - tapOn: "CONTINUE"
+# Dismiss the debug device-info alert / any permission popup if present
+- runFlow:
+    when:
+        visible: "OK"
+    commands:
+        - tapOn: "OK"
+- runFlow:
+    when:
+        visible: "Allow"
+    commands:
+        - tapOn: "Allow"
+# We should now be inside the game's home screen (allow the splash to finish)
+- extendedWaitUntil:
+    visible:
+        id: "startTheHuntButton"
+    timeout: 12000
+# Go back to the carousel. The home shows a "Leaving Game" confirmation when a
+# session is active — choose LEAVE to return to game selection.
+- tapOn:
+    id: "navigationBackButton"
+- runFlow:
+    when:
+        visible: .*Leaving Game.*
+    commands:
+        - tapOn: "LEAVE"
+# Carousel's container id isn't reliably queryable after a game->back, so key off
+# the stable "Choose your adventure" home text.
+- extendedWaitUntil:
+    visible: "Choose your adventure"
+    timeout: 8000

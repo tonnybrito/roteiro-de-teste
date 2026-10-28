@@ -16,6 +16,8 @@ Uma *skill* é um manual de instruções que o Claude segue quando você digita 
 | `/conversao-android` | 4 · alvo Android: letra grande, tela baixa, teclado, botão voltar, versão da Play Store. | `/roteiro-de-teste` |
 | `/conversao-ios` | 4 · alvo iPhone: letra grande (*Dynamic Type*), ilha e entalhe, teclado, gesto de voltar, versão da App Store. | `/roteiro-de-teste` |
 
+**Duas edições.** Esta página descreve a **edição em português** (`skills/`, instalada com `instalar.sh`). A **edição em inglês** tem as mesmas sete skills com nomes de comando em inglês (`/test-checklist`, `/bdd-first`, `/conversion-prepare`…), fica em `skills-en/` e é instalada com `instalar-en.sh`. As duas fazem exatamente o mesmo: instale só uma. A `skills-en/` é gerada a partir da `skills/` pelo `gerar-edicao-en.py`; nunca edite à mão.
+
 Os exemplos usam a **Trilha dos Bichos**, um app inventado (uma trilha da Floresta, do Oceano, da Savana e da Neve, com uma coruja de guia). Todas as imagens do guia são ilustrações fictícias.
 
 ## Instalar
@@ -109,7 +111,8 @@ Funcionam **nos dois sentidos**: iPhone → Android ou Android → iPhone. O app
 | `skills/_comum-instalacao.md` | O passo 0 que todas repetem: a janela de escolha da família |
 | `instalar.sh` | O instalador |
 | `escolher-skills.sh` | O popup do macOS do passo 0 |
-| `GUIA.html` | O guia ilustrado da família |
+| `skills-en/`, `instalar-en.sh`, `escolher-skills-en.sh` | A edição em inglês, gerada pelo `gerar-edicao-en.py` |
+| `GUIA.html` | O guia ilustrado da família, em português e inglês |
 | `LEIA-ME.md` | Resumo curto do pacote |
 
 ## Requisitos

@@ -18,6 +18,7 @@ Abra o **GUIA.html** (dois cliques) para ver o que cada uma faz, com imagens. O 
 ## Instalar
 - Pedindo ao Claude qualquer uma delas: ela abre a janela de escolha (a `/roteiro-de-teste` entra primeiro quando há uma de conversão).
 - Ou no Terminal: `zsh ~/Ferramentas/conversao-ios-android/instalar.sh` (menu: 1 só a roteiro-de-teste · 2 escolher · 3 todas).
+- Edição em inglês (comandos `/test-checklist`, `/bdd-first`, `/conversion-…`): `instalar-en.sh`. Instale só uma das duas.
 - Depois: arraste **Abrir HTML Salvável** de `~/Applications` para a Dock e reinicie o Claude Code.
 
 ## O que tem aqui
@@ -50,7 +51,7 @@ Open **GUIA.html** (double-click) to see what each one does, with pictures. The 
 
 ## Install
 - Ask Claude for any of them: it opens the choice window (`/roteiro-de-teste` comes first whenever a conversion skill is chosen).
-- Or in Terminal: `zsh ~/Ferramentas/conversao-ios-android/instalar.sh` (menu: 1 only roteiro-de-teste · 2 choose · 3 all).
+- Or in Terminal: `zsh ~/Ferramentas/conversao-ios-android/instalar-en.sh` for the **English edition** (commands `/test-checklist`, `/bdd-first`, `/conversion-…`, in `skills-en/`), or `instalar.sh` for the Portuguese one. Install only one.
 - Then: drag **Abrir HTML Salvável** ("Open Saveable HTML") from `~/Applications` to the Dock and restart Claude Code.
 
 ## What is here
